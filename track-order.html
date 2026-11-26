@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Your Order - SLAO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slao: { maroon: '#6b182b', maroonDark: '#4a0f1d', gold: '#d4af37', cream: '#fcf8f3', charcoal: '#1c1c1c' }
+                    },
+                    fontFamily: { serif: ['Cinzel', 'serif'], sans: ['Plus Jakarta Sans', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::selection { background-color: #6b182b; color: #f3e8c9; }
+        ::-moz-selection { background-color: #6b182b; color: #f3e8c9; }
+        .copyable-text { cursor: pointer !important; }
+    </style>
+<style>
+        img[src*="slao-logo"], .slao-logo-clickable {
+            cursor: pointer !important;
+        }
+</style>
+<style>
+        .copyable-text,
+        .copyable-text *,
+        a, a *,
+        button, button *,
+        [onclick], [onclick] *,
+        .cursor-pointer, .cursor-pointer *,
+        img[src*="slao-logo"], .slao-logo-clickable {
+            cursor: pointer !important;
+        }
+        input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"], input[type="url"], textarea {
+            cursor: text !important;
+        }
+</style>
+</head>
+<body class="bg-slao-cream text-gray-900 min-h-screen flex flex-col">
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-slao-maroon text-white text-xs md:text-sm tracking-wider py-2 px-6 flex justify-between items-center">
+        <span class="hidden md:inline-block copyable-text"><i class="fa-solid fa-sparkles mr-2"></i> Nationwide Delivery Across Pakistan</span>
+        <span class="w-full md:w-auto text-center font-semibold copyable-text">MID-SUMMER SALE IS LIVE! UP TO 40% OFF</span>
+        <span class="hidden md:inline-block"><i class="fa-solid fa-phone mr-1"></i><a href="tel:+923329975035" class="hover:text-slao-gold transition">+92 3329975035</a></span>
+    </div>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
+            <a href="index.html" class="flex-shrink-0 flex items-center gap-3">
+                <img src="images/slao-logo.png" alt="SLAO Collections" style="cursor: pointer;" class="slao-logo-clickable w-11 h-11 rounded-full object-cover border border-slao-gold shadow-sm cursor-pointer">
+                <div>
+                    <span class="font-serif text-2xl sm:text-3xl font-extrabold tracking-widest text-slao-maroon">SLAO</span>
+                    <span class="block text-[10px] tracking-[0.28em] font-semibold text-slao-gold uppercase -mt-1">Collections</span>
+                </div>
+            </a>
+            <nav class="hidden lg:flex space-x-8 text-sm font-semibold tracking-wide uppercase">
+                <a href="index.html" class="text-gray-700 hover:text-slao-maroon py-1">New Arrivals</a>
+                <a href="collections/unstitched/index.html" class="text-gray-700 hover:text-slao-maroon py-1">Unstitched</a>
+                <a href="collections/ready-to-wear/index.html" class="text-gray-700 hover:text-slao-maroon py-1">Ready To Wear</a>
+                <a href="collections/western/index.html" class="text-gray-700 hover:text-slao-maroon py-1">Western</a>
+                <a href="track-order.html" class="text-slao-maroon border-b-2 border-slao-maroon py-1 font-bold">Track Order</a>
+            </nav>
+            <a href="index.html" class="text-xs font-bold uppercase text-slao-maroon hover:underline">Back to Shop</a>
+        </div>
+    </header>
+
+
+    <main class="max-w-4xl mx-auto w-full p-4 sm:p-8 flex-grow space-y-6">
+        <!-- Tracking Search Card -->
+        <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-lg space-y-4">
+            <h1 class="font-serif text-2xl sm:text-3xl font-bold text-slao-maroon copyable-text">Track Your Order</h1>
+            <p class="text-xs sm:text-sm text-gray-600 copyable-text">Enter your tracking number below or scan the QR code on your order slip to view your live order status.</p>
+
+            <div class="space-y-1.5">
+                <label for="track-order-input" class="block text-xs font-bold uppercase tracking-wider text-gray-600 copyable-text">Tracking Number</label>
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <input id="track-order-input" type="text" placeholder="Enter Tracking Number (e.g. SLAO-123456)" onkeydown="if(event.key==='Enter') searchOrder()" class="flex-1 p-3.5 text-sm border border-gray-300 rounded-xl font-mono uppercase focus:outline-none focus:ring-2 focus:ring-slao-maroon">
+                    <button type="button" onclick="searchOrder()" class="px-7 py-3.5 bg-slao-maroon hover:bg-slao-maroonDark text-white text-xs font-bold rounded-xl uppercase tracking-wider shadow transition">
+                        Track Your Order
+                    </button>
+                </div>
+            </div>
+
+            <!-- Error Alert when invalid or empty tracking number is entered -->
+            <div id="track-not-found" class="hidden bg-rose-50 border border-rose-300 text-rose-700 p-4 rounded-2xl text-xs sm:text-sm font-semibold flex items-center gap-3">
+                <i class="fa-solid fa-circle-exclamation text-lg text-rose-600"></i>
+                <span id="track-error-msg">Invalid tracking number. Please check your Order ID and try again.</span>
+            </div>
+        </div>
+
+        <!-- Customer Read-Only Order Status & Details (No Print Button) -->
+        <div id="track-result-box" class="hidden bg-white p-6 sm:p-8 rounded-3xl shadow-lg space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center border-b pb-4 gap-2">
+                <div>
+                    <p class="text-xs text-gray-500 uppercase copyable-text">Tracking Number</p>
+                    <h2 id="res-order-id" class="font-mono text-2xl font-extrabold text-slao-maroon copyable-text"></h2>
+                    <p id="res-order-date" class="text-xs text-gray-500 copyable-text"></p>
+                </div>
+                <div class="sm:text-right flex flex-col sm:items-end gap-2">
+                    <div>
+                        <p class="text-[11px] text-gray-400 uppercase mb-1">Current Status</p>
+                        <span id="res-current-badge" class="inline-block px-4 py-1.5 rounded-full text-xs font-extrabold uppercase bg-amber-100 text-amber-800"></span>
+                    </div>
+                    <button id="track-cancel-btn" type="button" onclick="openTrackCancelModal()" class="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl uppercase tracking-wider transition">
+                        Cancel Order
+                    </button>
+                </div>
+            </div>
+
+            <!-- Read-Only Progress Steps including In Transit -->
+            <div class="grid grid-cols-2 sm:grid-cols-6 gap-2.5 text-center">
+                <div id="step-confirmed" class="p-3 rounded-2xl border bg-gray-50 space-y-1">
+                    <i class="fa-solid fa-circle-check text-lg"></i>
+                    <p class="text-[11px] font-bold">Order Confirmed</p>
+                </div>
+                <div id="step-packing" class="p-3 rounded-2xl border bg-gray-50 space-y-1">
+                    <i class="fa-solid fa-box-open text-lg"></i>
+                    <p class="text-[11px] font-bold">Packing Pending</p>
+                </div>
+                <div id="step-dispatch" class="p-3 rounded-2xl border bg-gray-50 space-y-1">
+                    <i class="fa-solid fa-dolly text-lg"></i>
+                    <p class="text-[11px] font-bold">Dispatched</p>
+                </div>
+                <div id="step-transit" class="p-3 rounded-2xl border bg-gray-50 space-y-1">
+                    <i class="fa-solid fa-truck-fast text-lg"></i>
+                    <p class="text-[11px] font-bold">In Transit</p>
+                </div>
+                <div id="step-delivered" class="p-3 rounded-2xl border bg-gray-50 space-y-1">
+                    <i class="fa-solid fa-house-circle-check text-lg"></i>
+                    <p class="text-[11px] font-bold">Delivery Complete</p>
+                </div>
+                <div id="step-return" class="p-3 rounded-2xl border bg-gray-50 space-y-1">
+                    <i class="fa-solid fa-rotate-left text-lg"></i>
+                    <p class="text-[11px] font-bold">Return / Cancelled</p>
+                </div>
+            </div>
+
+            <div id="res-cancel-banner" class="hidden p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-xs text-rose-800"></div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                <div class="bg-slao-cream p-4 rounded-2xl border space-y-1.5 text-xs">
+                    <h3 class="font-bold text-slao-maroon uppercase tracking-wider mb-2 copyable-text">Customer &amp; Delivery Details</h3>
+                    <p><b>Customer Name:</b> <span id="res-name" class="copyable-text"></span></p>
+                    <p><b>Primary Contact:</b> <span id="res-phone" class="copyable-text"></span></p>
+                    <p><b>Alternative Contact:</b> <span id="res-alt-phone" class="copyable-text"></span></p>
+                    <p><b>City / Province:</b> <span id="res-location" class="copyable-text"></span></p>
+                    <p><b>Address:</b> <span id="res-address" class="copyable-text"></span></p>
+                    <p><b>Payment Method:</b> <span id="res-payment" class="copyable-text"></span></p>
+                </div>
+                <div class="bg-gray-50 p-4 rounded-2xl border space-y-2 text-xs">
+                    <h3 class="font-bold text-slao-maroon uppercase tracking-wider mb-2 copyable-text">Order Summary</h3>
+                    <div id="res-items" class="divide-y"></div>
+                    <div class="border-t pt-2 flex justify-between font-bold text-sm text-slao-maroon">
+                        <span>Total Amount</span>
+                        <span id="res-total" class="copyable-text"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 7 Days Easy Return & Exchange Form (Shown ONLY when order is confirmed AND Delivery Complete) -->
+            <div id="seven-day-return-box" class="hidden p-5 rounded-2xl bg-slao-cream border-2 border-slao-maroon space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slao-gold/50 pb-3">
+                    <div>
+                        <h3 class="font-serif text-lg font-bold text-slao-maroon">7 Days Easy Return &amp; Exchange Policy</h3>
+                        <p class="text-xs text-gray-600">Eligible for delivered orders within 7 days of delivery</p>
+                    </div>
+                    <span class="px-3 py-1 bg-emerald-100 text-emerald-800 text-[11px] font-bold rounded-full uppercase">Delivered Order Verified</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <div>
+                        <label class="block font-bold uppercase text-gray-700 mb-1">Request Type *</label>
+                        <select id="ret-type" class="w-full p-2.5 border rounded-xl bg-white">
+                            <option value="Size Exchange">Size Exchange</option>
+                            <option value="Color / Design Exchange">Color / Design Exchange</option>
+                            <option value="Full Return & Refund">Full Return &amp; Refund</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold uppercase text-gray-700 mb-1">Return / Exchange Reason *</label>
+                        <select id="ret-reason" class="w-full p-2.5 border rounded-xl bg-white">
+                            <option value="">-- Select Reason --</option>
+                            <option value="Size does not fit properly">Size does not fit properly</option>
+                            <option value="Did not like fabric or color">Did not like fabric or color</option>
+                            <option value="Received different item or size">Received different item or size</option>
+                            <option value="Stitching or fabric defect">Stitching or fabric defect</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="text-xs">
+                    <label class="block font-bold uppercase text-gray-700 mb-1">Desired Replacement Size / Notes</label>
+                    <textarea id="ret-notes" rows="2" placeholder="Mention required size (e.g. L instead of M) or return details..." class="w-full p-2.5 border rounded-xl bg-white"></textarea>
+                </div>
+
+                <button type="button" onclick="submitSevenDayReturn()" class="px-6 py-2.5 bg-slao-maroon hover:bg-slao-maroonDark text-white text-xs font-bold rounded-xl uppercase tracking-wider transition">
+                    Submit Return / Exchange Request
+                </button>
+            </div>
+        </div>
+
+        <!-- 7 Days Easy Return Policy Info Box (when clicked from footer/banner before searching an order) -->
+        <div id="return-policy-guide" class="hidden bg-white p-6 sm:p-8 rounded-3xl shadow-lg border border-slao-gold/60 space-y-3">
+            <div class="flex items-center justify-between">
+                <h2 class="font-serif text-xl sm:text-2xl font-bold text-slao-maroon">7 Days Easy Return Policy</h2>
+                <span class="px-3 py-1 bg-slao-cream text-slao-maroon text-xs font-bold rounded-full border border-slao-gold">Verified Customers Only</span>
+            </div>
+            <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                Customers who have placed a confirmed order and received delivery (<b>Delivery Complete</b>) can request a size exchange or return within <b>7 days</b> of delivery. Enter your Tracking Number above to open your Return &amp; Exchange form.
+            </p>
+        </div>
+    </main>
+
+    <!-- CANCEL ORDER MODAL WITH REASONS FORM -->
+    <div id="track-cancel-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-rose-300">
+            <div class="bg-rose-700 text-white px-6 py-4 flex items-center justify-between">
+                <h3 class="font-serif text-lg font-bold">Cancel / Return Order Request</h3>
+                <button type="button" onclick="closeTrackCancelModal()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6 space-y-4 text-xs">
+                <p class="text-gray-600">Select the reason for cancelling or returning order <b id="track-cancel-oid" class="text-slao-maroon"></b>:</p>
+                <div>
+                    <label class="block font-bold uppercase text-gray-700 mb-1.5">Reason *</label>
+                    <select id="track-cancel-reason" class="w-full p-3 border rounded-xl bg-white">
+                        <option value="">-- Choose a Reason --</option>
+                        <option value="Ordered wrong size or color">Ordered wrong size or color</option>
+                        <option value="Changed my mind / No longer needed">Changed my mind / No longer needed</option>
+                        <option value="Delivery taking longer than expected">Delivery taking longer than expected</option>
+                        <option value="Duplicate order placed">Duplicate order placed</option>
+                        <option value="Item not as expected">Item not as expected</option>
+                        <option value="Other reason">Other reason</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold uppercase text-gray-700 mb-1.5">Additional Comments (Optional)</label>
+                    <textarea id="track-cancel-notes" rows="2" placeholder="Write any extra details here..." class="w-full p-3 border rounded-xl"></textarea>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeTrackCancelModal()" class="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-xl uppercase">Close</button>
+                    <button type="button" onclick="submitTrackCancel()" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl uppercase">Submit Request</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features / Value Proposition Banner -->
+    <section class="bg-slao-maroon text-white py-12 border-t border-slao-gold/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+                <a href="track-order.html" class="block space-y-2 group rounded-2xl p-2 hover:bg-white/10 transition cursor-pointer" title="Track Your Order">
+                    <i class="fa-solid fa-truck-fast text-3xl text-slao-gold mb-2 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-serif font-bold text-lg group-hover:text-slao-gold transition">Fast Delivery</h4>
+                    <p class="text-xs text-gray-300">Tap to Track Your Parcel &amp; Delivery Status</p>
+                </a>
+                <div onclick="openAuthenticQualityModal()" class="block space-y-2 group rounded-2xl p-2 hover:bg-white/10 transition cursor-pointer" title="Tap for 100% Authentic Quality Details">
+                    <i class="fa-solid fa-shield-halved text-3xl text-slao-gold mb-2 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-serif font-bold text-lg group-hover:text-slao-gold transition copyable-text">100% Authentic Quality</h4>
+                    <p class="text-xs text-gray-200 font-medium copyable-text">Premium fabric &amp; original designer prints</p>
+                    <p class="text-[11px] text-gray-300 leading-relaxed copyable-text">Pure breathable lawn, chiffon &amp; silk weaves with color-fast dyes, fine embroidery &amp; strict quality checks. <span class="underline text-slao-gold font-semibold">Tap for details</span></p>
+                </div>
+                <a href="track-order.html?openReturn=1" class="block space-y-2 group rounded-2xl p-2 hover:bg-white/10 transition cursor-pointer" title="7 Days Easy Return Policy">
+                    <i class="fa-solid fa-arrow-rotate-left text-3xl text-slao-gold mb-2 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-serif font-bold text-lg group-hover:text-slao-gold transition">7 Days Easy Return Policy</h4>
+                    <p class="text-xs text-gray-300">Eligible after order confirmation &amp; delivery</p>
+                </a>
+                <a href="tel:+923329975035" class="block space-y-2 group rounded-2xl p-2 hover:bg-white/10 transition cursor-pointer" title="Call Customer Care: +92 3329975035">
+                    <i class="fa-solid fa-headset text-3xl text-slao-gold mb-2 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-serif font-bold text-lg group-hover:text-slao-gold transition">24/7 Customer Care</h4>
+                    <p class="text-xs text-gray-300">Tap to Call: +92 3329975035</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slao-charcoal text-gray-300 pt-12 pb-8 border-t border-gray-800 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-400 gap-4">
+            <p class="copyable-text">&copy; 2026 SLAO (Wear Your Style). All Rights Reserved.</p>
+            <div class="flex gap-6">
+                <a href="index.html" class="hover:text-slao-gold transition">Home</a>
+                <a href="track-order.html" class="hover:text-slao-gold transition">Track Your Order</a>
+                <a href="privacy-policy.html" class="hover:text-slao-gold transition">Privacy Policy</a>
+                <a href="terms-and-conditions.html" class="hover:text-slao-gold transition">Terms &amp; Conditions</a>
+                <a href="tel:+923329975035" class="hover:text-slao-gold transition">Support: +92 3329975035</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="store.js"></script>
+    <script>
+        let currentTrackedOrderId = null;
+
+        function renderStatusSteps(status) {
+            const steps = {
+                'Order Confirmed': 'step-confirmed',
+                'Packing Pending': 'step-packing',
+                'Dispatched': 'step-dispatch',
+                'In Transit': 'step-transit',
+                'Delivery Complete': 'step-delivered',
+                'Return Order': 'step-return'
+            };
+
+            Object.values(steps).forEach(id => {
+                const el = document.getElementById(id);
+                el.className = 'p-3 rounded-2xl border bg-gray-50 text-gray-400 space-y-1';
+            });
+
+            const badge = document.getElementById('res-current-badge');
+            badge.innerText = status;
+
+            if (status === 'Return Order' || status === 'Order Cancelled') {
+                document.getElementById('step-return').className = 'p-3 rounded-2xl border-2 border-rose-600 bg-rose-50 text-rose-700 space-y-1';
+                badge.className = 'inline-block px-4 py-1.5 rounded-full text-xs font-extrabold uppercase bg-rose-100 text-rose-800';
+                return;
+            }
+
+            const normalizedStatus = status === 'Dispatch Pending' ? 'Dispatched' : status;
+            const orderFlow = ['Order Confirmed', 'Packing Pending', 'Dispatched', 'In Transit', 'Delivery Complete'];
+            const idx = orderFlow.indexOf(normalizedStatus);
+            for (let i = 0; i <= (idx === -1 ? 1 : idx); i++) {
+                const el = document.getElementById(steps[orderFlow[i]]);
+                el.className = 'p-3 rounded-2xl border-2 border-emerald-600 bg-emerald-50 text-emerald-800 space-y-1';
+            }
+
+            badge.className = normalizedStatus === 'Delivery Complete'
+                ? 'inline-block px-4 py-1.5 rounded-full text-xs font-extrabold uppercase bg-emerald-100 text-emerald-800'
+                : 'inline-block px-4 py-1.5 rounded-full text-xs font-extrabold uppercase bg-amber-100 text-amber-800';
+        }
+
+        async function searchOrder(prefillId) {
+            const rawInput = prefillId !== undefined ? prefillId : document.getElementById('track-order-input').value;
+            const query = rawInput.trim().toUpperCase();
+            const errBox = document.getElementById('track-not-found');
+            const errMsg = document.getElementById('track-error-msg');
+            const resBox = document.getElementById('track-result-box');
+
+            if (!query) {
+                resBox.classList.add('hidden');
+                errMsg.innerText = 'Please enter a valid tracking number to check your order status.';
+                errBox.classList.remove('hidden');
+                return;
+            }
+
+            document.getElementById('track-order-input').value = query;
+            let savedOrders = JSON.parse(localStorage.getItem('slao_orders') || '[]');
+            try {
+                const fsOrders = await slaoFsGetAll('orders');
+                if (Array.isArray(fsOrders) && fsOrders.length) {
+                    const map = new Map();
+                    [...fsOrders, ...savedOrders].forEach(o => {
+                        const oid = String(o.orderId || o.voucherId || '').toUpperCase();
+                        if (oid && !map.has(oid)) map.set(oid, o);
+                    });
+                    savedOrders = Array.from(map.values());
+                }
+            } catch (e) {}
+            try {
+                const res = await fetch(`${SLAO_API_BASE}/orders`);
+                if (res.ok) {
+                    const remoteOrders = await res.json();
+                    if (Array.isArray(remoteOrders) && remoteOrders.length) {
+                        const map = new Map();
+                        [...remoteOrders, ...savedOrders].forEach(o => {
+                            const oid = String(o.orderId || o.voucherId || '').toUpperCase();
+                            if (oid && !map.has(oid)) map.set(oid, o);
+                        });
+                        savedOrders = Array.from(map.values());
+                    }
+                }
+            } catch (e) {}
+            const found = savedOrders.find(o => (o.orderId || o.voucherId || '').toUpperCase() === query);
+
+            if (!found) {
+                resBox.classList.add('hidden');
+                errMsg.innerText = `No order found for tracking number "${query}". Please verify your Order ID and try again.`;
+                errBox.classList.remove('hidden');
+                return;
+            }
+
+            currentTrackedOrderId = found.orderId || found.voucherId;
+            errBox.classList.add('hidden');
+            resBox.classList.remove('hidden');
+
+            document.getElementById('res-order-id').innerText = currentTrackedOrderId;
+            document.getElementById('res-order-date').innerText = found.date ? `Order Date: ${found.date}` : '';
+            document.getElementById('res-name').innerText = found.name;
+            document.getElementById('res-phone').innerText = found.phone;
+            document.getElementById('res-alt-phone').innerText = found.altPhone || '—';
+            document.getElementById('res-location').innerText = `${found.city}, ${found.province} (${found.postalCode || ''})`;
+            document.getElementById('res-address').innerText = found.address;
+            document.getElementById('res-payment').innerText = found.payType;
+            document.getElementById('res-total').innerText = `Rs. ${found.totalAmount.toLocaleString()}`;
+
+            document.getElementById('res-items').innerHTML = (found.items || []).map(it => `
+                <div class="py-1.5 flex justify-between">
+                    <span>${it.name} (${it.color}, ${it.size}) &times; ${it.quantity}</span>
+                    <span class="font-bold">Rs. ${(it.price * it.quantity).toLocaleString()}</span>
+                </div>
+            `).join('');
+
+            const st = found.status || 'Packing Pending';
+            renderStatusSteps(st);
+
+            const cancelBtn = document.getElementById('track-cancel-btn');
+            cancelBtn.classList.toggle('hidden', st === 'Order Cancelled' || st === 'Return Order');
+
+            const cancelBanner = document.getElementById('res-cancel-banner');
+            if (found.cancelReason) {
+                cancelBanner.innerHTML = `<b>Cancellation / Return Reason Recorded:</b> ${found.cancelReason}${found.cancelNotes ? ' — ' + found.cancelNotes : ''}`;
+                cancelBanner.classList.remove('hidden');
+            } else {
+                cancelBanner.classList.add('hidden');
+            }
+
+            const returnBox = document.getElementById('seven-day-return-box');
+            returnBox.classList.toggle('hidden', st !== 'Delivery Complete');
+        }
+
+        function openTrackCancelModal() {
+            if (!currentTrackedOrderId) return;
+            document.getElementById('track-cancel-oid').innerText = currentTrackedOrderId;
+            document.getElementById('track-cancel-reason').value = '';
+            document.getElementById('track-cancel-notes').value = '';
+            document.getElementById('track-cancel-modal').classList.remove('hidden');
+        }
+
+        function closeTrackCancelModal() {
+            document.getElementById('track-cancel-modal').classList.add('hidden');
+        }
+
+        function submitTrackCancel() {
+            if (!currentTrackedOrderId) return;
+            const reason = document.getElementById('track-cancel-reason').value;
+            const notes = document.getElementById('track-cancel-notes').value.trim();
+            if (!reason) {
+                alert('Please select a reason before submitting.');
+                return;
+            }
+            const orders = JSON.parse(localStorage.getItem('slao_orders') || '[]');
+            const idx = orders.findIndex(o => (o.orderId || o.voucherId) === currentTrackedOrderId);
+            if (idx !== -1) {
+                orders[idx].status = 'Order Cancelled';
+                orders[idx].cancelReason = reason;
+                orders[idx].cancelNotes = notes;
+                localStorage.setItem('slao_orders', JSON.stringify(orders));
+                slaoFsUpsert('orders', orders[idx].orderId || orders[idx].voucherId, orders[idx]);
+            }
+            closeTrackCancelModal();
+            searchOrder(currentTrackedOrderId);
+        }
+
+        function submitSevenDayReturn() {
+            if (!currentTrackedOrderId) return;
+            const reqType = document.getElementById('ret-type').value;
+            const reason = document.getElementById('ret-reason').value;
+            const notes = document.getElementById('ret-notes').value.trim();
+            if (!reason) {
+                alert('Please select a return or exchange reason.');
+                return;
+            }
+            const orders = JSON.parse(localStorage.getItem('slao_orders') || '[]');
+            const idx = orders.findIndex(o => (o.orderId || o.voucherId) === currentTrackedOrderId);
+            if (idx !== -1) {
+                orders[idx].status = 'Return Order';
+                orders[idx].cancelReason = `${reqType}: ${reason}`;
+                orders[idx].cancelNotes = notes;
+                localStorage.setItem('slao_orders', JSON.stringify(orders));
+                slaoFsUpsert('orders', orders[idx].orderId || orders[idx].voucherId, orders[idx]);
+            }
+            searchOrder(currentTrackedOrderId);
+            alert('Your 7 Days Easy Return / Exchange request has been submitted.');
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const qrOrder = urlParams.get('order');
+        const openReturn = urlParams.get('openReturn');
+        if (openReturn === '1') {
+            document.getElementById('return-policy-guide').classList.remove('hidden');
+        }
+        if (qrOrder) {
+            searchOrder(qrOrder);
+        }
+    </script>
+</body>
+</html>

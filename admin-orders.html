@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLAO Admin Portal - Orders, Reviews, Likes &amp; Complaints</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slao: { maroon: '#6b182b', maroonDark: '#4a0f1d', gold: '#d4af37', cream: '#fcf8f3', charcoal: '#1c1c1c' }
+                    },
+                    fontFamily: { serif: ['Cinzel', 'serif'], sans: ['Plus Jakarta Sans', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        @media print {
+            body * { visibility: hidden; }
+            #admin-slip-print-area, #admin-slip-print-area * { visibility: visible; }
+            #admin-slip-print-area { position: fixed; inset: 0; width: 100%; background: #fff; padding: 20px; }
+            .no-print { display: none !important; }
+        }
+    </style>
+<style>
+        img[src*="slao-logo"], .slao-logo-clickable {
+            cursor: pointer !important;
+        }
+</style>
+<style>
+        .copyable-text,
+        .copyable-text *,
+        a, a *,
+        button, button *,
+        [onclick], [onclick] *,
+        .cursor-pointer, .cursor-pointer *,
+        img[src*="slao-logo"], .slao-logo-clickable {
+            cursor: pointer !important;
+        }
+        input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"], input[type="url"], textarea {
+            cursor: text !important;
+        }
+</style>
+</head>
+<body class="bg-slao-cream text-gray-900 min-h-screen flex flex-col">
+    <header class="bg-slao-maroon text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
+            <div>
+                <div class="flex items-center gap-3">
+                    <img src="images/slao-logo.png" alt="SLAO Logo" style="cursor: pointer;" class="slao-logo-clickable w-11 h-11 rounded-full object-cover border border-slao-gold cursor-pointer">
+                    <span class="font-serif text-2xl sm:text-3xl font-extrabold tracking-widest">SLAO ADMIN PORTAL</span>
+                </div>
+                <span class="block text-[10px] tracking-[0.25em] text-slao-gold uppercase">Live Database: Orders, Reviews, Likes &amp; Complaints</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs font-bold uppercase">
+                <button type="button" id="btn-whatsapp-order-slip" onclick="openManualWhatsAppSlipModal()" class="px-4 py-2 rounded-xl bg-slao-gold text-slao-charcoal hover:bg-yellow-400 transition flex items-center gap-1.5 shadow">
+                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                    <span>WhatsApp Order Slip</span>
+                </button>
+                <button type="button" onclick="syncAllAdminData()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition">
+                    <i class="fa-solid fa-rotate mr-1"></i> Refresh Live Data
+                </button>
+                <a href="index.html" class="px-4 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-white border border-white/25 transition">Storefront</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto w-full p-4 sm:p-8 flex-grow space-y-6">
+        <!-- Live Counters -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div onclick="switchAdminTab('orders')" class="cursor-pointer bg-white p-5 rounded-2xl shadow border-l-4 border-slao-maroon">
+                <p class="text-xs text-gray-500 uppercase font-bold">Total Orders</p>
+                <p id="stat-orders" class="text-2xl font-extrabold text-slao-maroon mt-1">0</p>
+            </div>
+            <div onclick="switchAdminTab('likes')" class="cursor-pointer bg-white p-5 rounded-2xl shadow border-l-4 border-rose-600">
+                <p class="text-xs text-gray-500 uppercase font-bold">Customer Product Likes</p>
+                <p id="stat-likes" class="text-2xl font-extrabold text-rose-600 mt-1">0</p>
+            </div>
+            <div onclick="switchAdminTab('reviews')" class="cursor-pointer bg-white p-5 rounded-2xl shadow border-l-4 border-amber-500">
+                <p class="text-xs text-gray-500 uppercase font-bold">Product Reviews</p>
+                <p id="stat-reviews" class="text-2xl font-extrabold text-amber-600 mt-1">0</p>
+            </div>
+            <div onclick="switchAdminTab('complaints')" class="cursor-pointer bg-white p-5 rounded-2xl shadow border-l-4 border-blue-600">
+                <p class="text-xs text-gray-500 uppercase font-bold">Customer Complaints</p>
+                <p id="stat-complaints" class="text-2xl font-extrabold text-blue-600 mt-1">0</p>
+            </div>
+            <div onclick="switchAdminTab('customers')" class="cursor-pointer bg-white p-5 rounded-2xl shadow border-l-4 border-emerald-600">
+                <p class="text-xs text-gray-500 uppercase font-bold">Customers</p>
+                <p id="stat-customers" class="text-2xl font-extrabold text-emerald-600 mt-1">0</p>
+            </div>
+        </div>
+
+        <!-- Tabs & Search -->
+        <div class="bg-white p-5 rounded-3xl shadow flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex flex-wrap gap-2">
+                <button type="button" id="tab-orders" onclick="switchAdminTab('orders')" class="px-4 py-2 rounded-xl text-xs font-bold bg-slao-maroon text-white">Orders</button>
+                <button type="button" id="tab-likes" onclick="switchAdminTab('likes')" class="px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700">Customer Likes</button>
+                <button type="button" id="tab-reviews" onclick="switchAdminTab('reviews')" class="px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700">Product Reviews</button>
+                <button type="button" id="tab-complaints" onclick="switchAdminTab('complaints')" class="px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700">Complaints</button>
+                <button type="button" id="tab-customers" onclick="switchAdminTab('customers')" class="px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700">Customers</button>
+            </div>
+            <input id="admin-search" type="text" oninput="renderCurrentTab()" placeholder="Search Order ID, Customer, or Product..." class="w-full md:w-72 p-2.5 text-xs border rounded-xl">
+        </div>
+
+        <!-- Panels -->
+        <div id="panel-orders" class="space-y-4"></div>
+        <div id="panel-likes" class="hidden space-y-3"></div>
+        <div id="panel-reviews" class="hidden space-y-3"></div>
+        <div id="panel-complaints" class="hidden space-y-3"></div>
+        <div id="panel-customers" class="hidden space-y-3"></div>
+    </main>
+
+    <!-- Shipping Slip Modal -->
+    <div id="admin-slip-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden border-2 border-slao-maroon">
+            <div class="bg-slao-maroon text-white px-6 py-4 flex items-center justify-between no-print">
+                <h3 class="font-serif text-lg font-bold">Parcel Shipping Slip</h3>
+                <button type="button" onclick="document.getElementById('admin-slip-modal').classList.add('hidden')" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="admin-slip-print-area" class="p-6 space-y-4 text-xs"></div>
+            <div class="px-6 py-4 bg-gray-50 border-t flex justify-end gap-3 no-print">
+                <button type="button" onclick="document.getElementById('admin-slip-modal').classList.add('hidden')" class="px-5 py-2.5 bg-gray-200 text-gray-800 font-bold rounded-xl uppercase">Close</button>
+                <button type="button" onclick="window.print()" class="px-6 py-2.5 bg-slao-maroon text-white font-bold rounded-xl uppercase">Print Slip</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="store.js"></script>
+    <script>
+        let ADMIN_ORDERS = [];
+        let ADMIN_REVIEWS = [];
+        let ADMIN_LIKES = [];
+        let ADMIN_COMPLAINTS = [];
+        let ADMIN_CUSTOMERS = [];
+        let activeTab = 'orders';
+
+        function mergeUniqueRecords(primaryList, secondaryList, keyFn) {
+            const out = [];
+            const seen = new Set();
+            [...(Array.isArray(primaryList) ? primaryList : []), ...(Array.isArray(secondaryList) ? secondaryList : [])].forEach(item => {
+                if (!item) return;
+                const k = keyFn(item);
+                if (!seen.has(k)) {
+                    seen.add(k);
+                    out.push(item);
+                }
+            });
+            return out;
+        }
+
+        async function syncAllAdminData() {
+            let localOrders = JSON.parse(localStorage.getItem('slao_orders') || '[]');
+            let localReviews = JSON.parse(localStorage.getItem('slao_reviews') || '[]');
+            let localLikes = JSON.parse(localStorage.getItem('slao_admin_likes') || '[]');
+            let localComplaints = JSON.parse(localStorage.getItem('slao_complaints') || '[]');
+            let localCustomers = JSON.parse(localStorage.getItem('slao_customers') || '[]');
+
+            try {
+                const [fsOrders, fsReviews, fsLikes, fsComplaints, fsCustomers] = await Promise.all([
+                    slaoFsGetAll('orders'),
+                    slaoFsGetAll('reviews'),
+                    slaoFsGetAll('likes'),
+                    slaoFsGetAll('complaints'),
+                    slaoFsGetAll('customers')
+                ]);
+                if (Array.isArray(fsOrders)) {
+                    localOrders = mergeUniqueRecords(fsOrders, localOrders, o => String(o.orderId || o.voucherId || o._fsDocId || ''));
+                    localOrders.sort((a, b) => Number(b._updatedAtMs || 0) - Number(a._updatedAtMs || 0));
+                }
+                if (Array.isArray(fsReviews)) {
+                    localReviews = mergeUniqueRecords(fsReviews, localReviews, r => String(r.id || r._fsDocId || (r.customerName + '|' + r.comment + '|' + r.date)));
+                }
+                if (Array.isArray(fsLikes)) {
+                    localLikes = mergeUniqueRecords(fsLikes, localLikes, l => String(l.id || l._fsDocId || ((l.customerEmail || '') + '_' + l.productId)));
+                }
+                if (Array.isArray(fsComplaints)) {
+                    localComplaints = mergeUniqueRecords(fsComplaints, localComplaints, c => String(c.id || c._fsDocId || (c.customerName + '|' + c.message)));
+                }
+                if (Array.isArray(fsCustomers)) {
+                    localCustomers = mergeUniqueRecords(fsCustomers, localCustomers, u => String(u.id || u._fsDocId || u.email || u.phone || u.name));
+                }
+            } catch (e) {}
+
+            try {
+                const [oRes, rRes, lRes, cRes, uRes] = await Promise.all([
+                    fetch(`${SLAO_API_BASE}/orders`),
+                    fetch(`${SLAO_API_BASE}/reviews`),
+                    fetch(`${SLAO_API_BASE}/likes`),
+                    fetch(`${SLAO_API_BASE}/complaints`),
+                    fetch(`${SLAO_API_BASE}/customers`)
+                ]);
+                if (oRes.ok) {
+                    const apiOrders = await oRes.json();
+                    if (Array.isArray(apiOrders)) localOrders = mergeUniqueRecords(apiOrders, localOrders, o => String(o.orderId || o.voucherId || ''));
+                }
+                if (rRes.ok) {
+                    const apiReviews = await rRes.json();
+                    if (Array.isArray(apiReviews)) localReviews = mergeUniqueRecords(apiReviews, localReviews, r => String(r.id || (r.customerName + '|' + r.comment + '|' + r.date)));
+                }
+                if (lRes.ok) {
+                    const apiLikes = await lRes.json();
+                    if (Array.isArray(apiLikes)) localLikes = mergeUniqueRecords(apiLikes, localLikes, l => String(l.id || ((l.customerEmail || '') + '_' + l.productId)));
+                }
+                if (cRes.ok) {
+                    const apiComplaints = await cRes.json();
+                    if (Array.isArray(apiComplaints)) localComplaints = mergeUniqueRecords(apiComplaints, localComplaints, c => String(c.id || (c.customerName + '|' + c.message)));
+                }
+                if (uRes.ok) {
+                    const apiCustomers = await uRes.json();
+                    if (Array.isArray(apiCustomers)) localCustomers = mergeUniqueRecords(apiCustomers, localCustomers, u => String(u.id || u.email || u.phone || u.name));
+                }
+            } catch (e) {}
+
+            ADMIN_ORDERS = localOrders;
+            ADMIN_REVIEWS = localReviews;
+            ADMIN_LIKES = localLikes;
+            ADMIN_COMPLAINTS = localComplaints;
+            ADMIN_CUSTOMERS = localCustomers;
+
+            document.getElementById('stat-orders').innerText = ADMIN_ORDERS.length;
+            document.getElementById('stat-likes').innerText = ADMIN_LIKES.length;
+            document.getElementById('stat-reviews').innerText = ADMIN_REVIEWS.length;
+            document.getElementById('stat-complaints').innerText = ADMIN_COMPLAINTS.length;
+            document.getElementById('stat-customers').innerText = ADMIN_CUSTOMERS.length;
+            renderCurrentTab();
+        }
+
+        function switchAdminTab(tab) {
+            activeTab = tab;
+            ['orders', 'likes', 'reviews', 'complaints', 'customers'].forEach(t => {
+                document.getElementById('panel-' + t).classList.toggle('hidden', t !== tab);
+                document.getElementById('tab-' + t).className = t === tab
+                    ? 'px-4 py-2 rounded-xl text-xs font-bold bg-slao-maroon text-white'
+                    : 'px-4 py-2 rounded-xl text-xs font-bold bg-gray-100 text-gray-700';
+            });
+            renderCurrentTab();
+        }
+
+        async function updateOrderStatus(orderId, newStatus) {
+            const idx = ADMIN_ORDERS.findIndex(o => (o.orderId || o.voucherId) === orderId);
+            if (idx !== -1) {
+                ADMIN_ORDERS[idx].status = newStatus;
+                slaoFsUpsert('orders', orderId, ADMIN_ORDERS[idx]);
+            }
+            localStorage.setItem('slao_orders', JSON.stringify(ADMIN_ORDERS));
+            renderCurrentTab();
+
+            try {
+                await fetch(`${SLAO_API_BASE}/orders/${encodeURIComponent(orderId)}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                });
+            } catch (e) {}
+        }
+
+        async function resolveComplaint(id) {
+            const idx = ADMIN_COMPLAINTS.findIndex(c => c.id === id);
+            if (idx !== -1) {
+                ADMIN_COMPLAINTS[idx].status = 'Resolved';
+                slaoFsUpsert('complaints', id, ADMIN_COMPLAINTS[idx]);
+            }
+            localStorage.setItem('slao_complaints', JSON.stringify(ADMIN_COMPLAINTS));
+            renderCurrentTab();
+            try {
+                await fetch(`${SLAO_API_BASE}/complaints/${encodeURIComponent(id)}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'Resolved' })
+                });
+            } catch (e) {}
+        }
+
+        function openAdminSlipModal(orderId) {
+            const o = ADMIN_ORDERS.find(x => (x.orderId || x.voucherId) === orderId);
+            if (!o) return;
+            const oid = o.orderId || o.voucherId;
+            const baseDir = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+            const trackUrl = `${baseDir}track-order.html?order=${encodeURIComponent(oid)}`;
+            const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(trackUrl)}`;
+
+            const itemsRows = (o.items || []).map(it => `
+                <tr class="border-b">
+                    <td class="py-2 font-bold">${it.name}</td>
+                    <td class="py-2">${it.color || '-'}</td>
+                    <td class="py-2 font-extrabold">${it.size || '-'}</td>
+                    <td class="py-2 text-center">${it.quantity}</td>
+                    <td class="py-2 text-right font-bold">Rs. ${(it.price * it.quantity).toLocaleString()}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('admin-slip-print-area').innerHTML = `
+                <div class="border-2 border-dashed border-gray-800 rounded-2xl p-5 space-y-4">
+                    <div class="flex justify-between items-start border-b pb-3">
+                        <div>
+                            <span class="font-serif text-2xl font-extrabold tracking-widest text-slao-maroon">SLAO</span>
+                            <p class="text-[10px] uppercase tracking-widest text-gray-500 font-bold">Parcel Shipping Slip</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-mono text-lg font-extrabold text-slao-maroon">${oid}</p>
+                            <p class="font-bold text-amber-700 uppercase">${o.status || 'Packing Pending'}</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-3 gap-4 items-center bg-slao-cream p-3.5 rounded-xl border">
+                        <div class="col-span-2 space-y-1">
+                            <p><b>Name:</b> ${o.name}</p>
+                            <p><b>Phone:</b> ${o.phone} / ${o.altPhone || 'N/A'}</p>
+                            <p><b>Location:</b> ${o.city}, ${o.province} (${o.postalCode || ''})</p>
+                            <p><b>Address:</b> ${o.address}</p>
+                        </div>
+                        <div class="flex flex-col items-center bg-white p-2 rounded-xl border">
+                            <img src="${qrSrc}" alt="QR" class="w-24 h-24">
+                        </div>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead><tr class="border-b bg-gray-100 text-[11px] uppercase"><th class="py-1.5 px-2">Suit</th><th>Color</th><th>Size</th><th class="text-center">Qty</th><th class="text-right px-2">Amount</th></tr></thead>
+                        <tbody>${itemsRows}</tbody>
+                    </table>
+                    <div class="flex justify-between pt-2 border-t text-sm font-extrabold text-slao-maroon">
+                        <span>Payment: ${o.payType}</span>
+                        <span>Grand Total: Rs. ${Number(o.totalAmount || 0).toLocaleString()}</span>
+                    </div>
+                </div>
+            `;
+            document.getElementById('admin-slip-modal').classList.remove('hidden');
+        }
+
+        function renderCurrentTab() {
+            const q = (document.getElementById('admin-search').value || '').trim().toLowerCase();
+
+            if (activeTab === 'orders') {
+                const container = document.getElementById('panel-orders');
+                const filtered = ADMIN_ORDERS.filter(o =>
+                    (o.orderId || o.voucherId || '').toLowerCase().includes(q) ||
+                    (o.name || '').toLowerCase().includes(q)
+                );
+                if (!filtered.length) {
+                    container.innerHTML = `<div class="bg-white p-8 rounded-3xl shadow text-center text-sm text-gray-500">No orders recorded yet.</div>`;
+                    return;
+                }
+                const statuses = ['Packing Pending', 'Dispatched', 'In Transit', 'Delivery Complete', 'Return Order', 'Order Cancelled'];
+                container.innerHTML = filtered.map(o => {
+                    const oid = o.orderId || o.voucherId;
+                    const current = o.status || 'Packing Pending';
+                    const btns = statuses.map(st => `<button type="button" onclick="updateOrderStatus('${oid}', '${st}')" class="px-3 py-1.5 rounded-xl text-xs font-bold border ${st === current ? 'bg-slao-maroon text-white border-slao-maroon' : 'bg-gray-50 text-gray-700 border-gray-300'}">${st}</button>`).join('');
+                    const suitsSummary = (o.items || []).map(it => `<span class="inline-block bg-slao-cream border border-slao-gold/50 rounded-lg px-2.5 py-1 text-xs font-semibold mr-1.5 mb-1">${it.name} (${it.color}, ${it.size}) &times; ${it.quantity}</span>`).join('');
+                    return `
+                        <div class="bg-white p-6 rounded-3xl shadow-md space-y-3">
+                            <div class="flex flex-col sm:flex-row justify-between border-b pb-3 gap-3">
+                                <div class="space-y-1">
+                                    <div><span class="font-mono text-lg font-extrabold text-slao-maroon">${oid}</span> <span class="text-xs text-gray-400 ml-2">${o.date || ''}</span></div>
+                                    <p class="text-xs"><b>${o.name}</b> &bull; ${o.phone} / ${o.altPhone || ''}</p>
+                                    <p class="text-xs text-gray-500">${o.address}, ${o.city}, ${o.province}</p>
+                                    <div class="pt-1">${suitsSummary}</div>
+                                </div>
+                                <div class="sm:text-right flex flex-col sm:items-end gap-2">
+                                    <p class="text-base font-extrabold text-slao-maroon">Rs. ${Number(o.totalAmount || 0).toLocaleString()} (${o.payType})</p>
+                                    <button type="button" onclick="openAdminSlipModal('${oid}')" class="px-4 py-2 bg-slao-maroon text-white text-xs font-bold rounded-xl uppercase">Print Slip</button>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-2">${btns}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            if (activeTab === 'likes') {
+                const container = document.getElementById('panel-likes');
+                const filtered = ADMIN_LIKES.filter(l =>
+                    (l.customerName || '').toLowerCase().includes(q) ||
+                    (l.productName || '').toLowerCase().includes(q)
+                );
+                container.innerHTML = filtered.length
+                    ? filtered.map(l => `
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                            <div>
+                                <p class="text-sm font-bold text-gray-900"><i class="fa-solid fa-heart text-rose-600 mr-1.5"></i> ${l.customerName} <span class="text-gray-500 font-normal">(${l.customerEmail || ''})</span></p>
+                                <p class="mt-1">Liked Product: <b class="text-slao-maroon">${l.productName}</b> (ID #${l.productId})</p>
+                            </div>
+                            <span class="text-gray-400">${l.date || ''}</span>
+                        </div>
+                    `).join('')
+                    : `<div class="bg-white p-8 rounded-3xl shadow text-center text-sm text-gray-500">No product likes recorded yet.</div>`;
+            }
+
+            if (activeTab === 'reviews') {
+                const container = document.getElementById('panel-reviews');
+                const filtered = ADMIN_REVIEWS.filter(r =>
+                    (r.customerName || '').toLowerCase().includes(q) ||
+                    (r.productName || '').toLowerCase().includes(q) ||
+                    (r.comment || '').toLowerCase().includes(q)
+                );
+                container.innerHTML = filtered.length
+                    ? filtered.map(r => {
+                        const prod = SLAO_PRODUCTS.find(p => p.id === Number(r.productId));
+                        const pname = r.productName || (prod ? prod.name : ('Product #' + r.productId));
+                        return `
+                            <div class="bg-white p-5 rounded-2xl shadow-sm border space-y-1.5 text-xs">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold text-sm text-slao-maroon">Reviewed Product: ${pname}</span>
+                                    <span class="text-amber-500 font-bold text-sm">${'★'.repeat(r.rating || 5)}</span>
+                                </div>
+                                <p class="text-gray-800 text-sm">"${r.comment}"</p>
+                                <p class="text-gray-500">Customer: <b>${r.customerName}</b> &bull; Order: ${r.voucherId || 'Verified'} &bull; ${r.date || ''}</p>
+                            </div>
+                        `;
+                    }).join('')
+                    : `<div class="bg-white p-8 rounded-3xl shadow text-center text-sm text-gray-500">No product reviews submitted yet.</div>`;
+            }
+
+            if (activeTab === 'complaints') {
+                const container = document.getElementById('panel-complaints');
+                const filtered = ADMIN_COMPLAINTS.filter(c =>
+                    (c.customerName || '').toLowerCase().includes(q) ||
+                    (c.message || '').toLowerCase().includes(q) ||
+                    (c.orderId || '').toLowerCase().includes(q)
+                );
+                container.innerHTML = filtered.length
+                    ? filtered.map(c => `
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border flex flex-col sm:flex-row justify-between gap-3 text-xs">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="font-bold text-sm text-gray-900">${c.customerName}</span>
+                                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${c.status === 'Resolved' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${c.status || 'Open'}</span>
+                                </div>
+                                <p class="text-gray-500">Contact: <b>${c.contact}</b> &bull; Order ID: <b>${c.orderId || 'General'}</b> &bull; ${c.date || ''}</p>
+                                <p class="text-sm text-gray-800 pt-1">${c.message}</p>
+                            </div>
+                            ${c.status !== 'Resolved' ? `<button type="button" onclick="resolveComplaint('${c.id}')" class="self-start px-4 py-2 bg-emerald-600 text-white font-bold rounded-xl uppercase">Mark Resolved</button>` : ''}
+                        </div>
+                    `).join('')
+                    : `<div class="bg-white p-8 rounded-3xl shadow text-center text-sm text-gray-500">No customer complaints submitted yet.</div>`;
+            }
+        }
+
+
+            if (activeTab === 'customers') {
+                const container = document.getElementById('panel-customers');
+                const filtered = ADMIN_CUSTOMERS.filter(u =>
+                    (u.name || '').toLowerCase().includes(q) ||
+                    (u.email || '').toLowerCase().includes(q) ||
+                    (u.provider || '').toLowerCase().includes(q)
+                );
+                container.innerHTML = filtered.length
+                    ? filtered.map(u => {
+                        const avatar = u.picture
+                            ? `<img src="${u.picture}" referrerpolicy="no-referrer" alt="${u.name}" class="w-12 h-12 rounded-full object-cover border-2 border-slao-maroon">`
+                            : `<div class="w-12 h-12 rounded-full bg-slao-maroon text-white font-bold flex items-center justify-center text-base">${(u.name || 'C').charAt(0).toUpperCase()}</div>`;
+                        return `
+                            <div class="bg-white p-5 rounded-2xl shadow-sm border space-y-2.5 text-xs">
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-3">
+                                    <div class="flex items-center gap-3.5">
+                                        ${avatar}
+                                        <div>
+                                            <p class="text-sm font-bold text-gray-900">${u.name || 'Customer'}</p>
+                                            <p class="text-gray-600">${u.email ? u.email : 'Checkout Customer'}${u.lastOrderId ? ' &bull; Last Order: <b class="text-slao-maroon">' + u.lastOrderId + '</b>' : ''}</p>
+                                            <span class="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-slao-cream border border-slao-gold/50 text-[10px] font-bold text-slao-maroon">${u.provider || 'Customer'}</span>
+                                        </div>
+                                    </div>
+                                    <span class="text-gray-400">${u.updatedAt || ''}</span>
+                                </div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-gray-700 bg-slao-cream/60 p-3 rounded-xl">
+                                    <p><b>Phone:</b> ${u.phone || 'N/A'}</p>
+                                    <p><b>Alt Phone:</b> ${u.altPhone || 'N/A'}</p>
+                                    <p><b>City / Province:</b> ${(u.city || '')}${u.province ? ', ' + u.province : ''}${u.postalCode ? ' (' + u.postalCode + ')' : ''}</p>
+                                    <p class="sm:col-span-2 lg:col-span-3"><b>Delivery Address:</b> ${u.address || 'N/A'}</p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')
+                    : `<div class="bg-white p-8 rounded-3xl shadow text-center text-sm text-gray-500">No customer details saved yet.</div>`;
+            }
+
+        syncAllAdminData();
+    </script>
+
+    <!-- MANUAL WHATSAPP ORDER & CUSTOMER SLIP GENERATOR MODAL -->
+    <div id="wa-manual-slip-modal" class="hidden fixed inset-0 z-50 bg-black/65 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto no-print">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full overflow-hidden border-2 border-slao-maroon my-auto">
+            <div class="bg-slao-maroon text-white px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-brands fa-whatsapp text-xl text-slao-gold"></i>
+                    <h3 class="font-serif text-lg sm:text-xl font-bold">WhatsApp Order &amp; Customer Slip Generator</h3>
+                </div>
+                <button type="button" onclick="closeManualWhatsAppSlipModal()" class="text-white/80 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <form id="wa-manual-slip-form" onsubmit="generateAndSaveWhatsAppCustomerSlip(event)" class="p-6 space-y-4 text-xs sm:text-sm">
+                <p class="text-xs text-gray-600 bg-slao-cream p-3 rounded-xl border border-slao-gold/40">
+                    Enter the customer details received on WhatsApp below. Clicking <b>Generate &amp; Print Slip</b> saves the order to your records and opens the printable customer slip with QR tracking code.
+                </p>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Customer Name *</label>
+                        <input id="wa-cust-name" type="text" required placeholder="e.g. Ayesha Khan" class="w-full p-2.5 border rounded-xl text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">WhatsApp / Phone Number *</label>
+                        <input id="wa-cust-phone" type="tel" required placeholder="e.g. 03001234567" class="w-full p-2.5 border rounded-xl text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">City *</label>
+                        <input id="wa-cust-city" type="text" required placeholder="e.g. Karachi" class="w-full p-2.5 border rounded-xl text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Payment Method</label>
+                        <select id="wa-cust-pay" class="w-full p-2.5 border rounded-xl text-xs bg-white font-semibold">
+                            <option value="COD">Cash on Delivery (COD)</option>
+                            <option value="Bank Transfer">Bank Transfer / Online</option>
+                            <option value="WhatsApp Paid">Paid via WhatsApp Confirmation</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Delivery Address *</label>
+                    <input id="wa-cust-address" type="text" required placeholder="House / Street / Area / Landmark" class="w-full p-2.5 border rounded-xl text-xs">
+                </div>
+
+                <div class="p-4 rounded-2xl bg-gray-50 border border-gray-200 space-y-3">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slao-maroon">Outfit / Item Details</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Select Store Product (Optional)</label>
+                            <select id="wa-prod-select" onchange="onWaProductPresetChange()" class="w-full p-2.5 border rounded-xl text-xs bg-white">
+                                <option value="">-- Custom / Manual Outfit Name --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Item / Outfit Name *</label>
+                            <input id="wa-item-name" type="text" required placeholder="e.g. Noir Embroidered Lawn 3-Piece" class="w-full p-2.5 border rounded-xl text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Color</label>
+                            <input id="wa-item-color" type="text" value="Black" placeholder="e.g. Black / Maroon" class="w-full p-2.5 border rounded-xl text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Size</label>
+                            <select id="wa-item-size" class="w-full p-2.5 border rounded-xl text-xs bg-white font-semibold">
+                                <option value="S">Small (S)</option>
+                                <option value="M" selected>Medium (M)</option>
+                                <option value="L">Large (L)</option>
+                                <option value="XL">Extra Large (XL)</option>
+                                <option value="Unstitched">Unstitched</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Quantity *</label>
+                            <input id="wa-item-qty" type="number" min="1" value="1" required class="w-full p-2.5 border rounded-xl text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Unit Price (Rs.) *</label>
+                            <input id="wa-item-price" type="number" min="0" value="3850" required class="w-full p-2.5 border rounded-xl text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Delivery Charges (Rs.)</label>
+                            <input id="wa-delivery-fee" type="number" min="0" value="250" class="w-full p-2.5 border rounded-xl text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Order Note (Optional)</label>
+                            <input id="wa-order-note" type="text" placeholder="e.g. Call before delivery" class="w-full p-2.5 border rounded-xl text-xs">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-end gap-2.5 pt-2">
+                    <button type="button" onclick="closeManualWhatsAppSlipModal()" class="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-xl text-xs uppercase">Cancel</button>
+                    <button type="submit" class="px-6 py-2.5 bg-slao-maroon hover:bg-slao-maroonDark text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow flex items-center gap-2">
+                        <i class="fa-solid fa-file-invoice text-slao-gold"></i>
+                        <span>Generate &amp; Print Slip</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function populateWaProductDropdown() {
+            const sel = document.getElementById('wa-prod-select');
+            if (!sel || typeof SLAO_PRODUCTS === 'undefined') return;
+            if (sel.options.length > 1) return;
+            SLAO_PRODUCTS.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = String(p.id);
+                opt.textContent = `${p.name} — Rs. ${Number(p.price || 0).toLocaleString()}`;
+                sel.appendChild(opt);
+            });
+        }
+
+        function onWaProductPresetChange() {
+            const sel = document.getElementById('wa-prod-select');
+            if (!sel || !sel.value || typeof SLAO_PRODUCTS === 'undefined') return;
+            const prod = SLAO_PRODUCTS.find(p => String(p.id) === String(sel.value));
+            if (!prod) return;
+            const nameEl = document.getElementById('wa-item-name');
+            const colorEl = document.getElementById('wa-item-color');
+            const priceEl = document.getElementById('wa-item-price');
+            if (nameEl) nameEl.value = prod.name;
+            if (colorEl && Array.isArray(prod.colors) && prod.colors.length) colorEl.value = prod.colors[0];
+            if (priceEl) priceEl.value = Number(prod.price || 0);
+        }
+
+        function openManualWhatsAppSlipModal() {
+            populateWaProductDropdown();
+            const m = document.getElementById('wa-manual-slip-modal');
+            if (m) m.classList.remove('hidden');
+        }
+
+        function closeManualWhatsAppSlipModal() {
+            const m = document.getElementById('wa-manual-slip-modal');
+            if (m) m.classList.add('hidden');
+        }
+
+        async function generateAndSaveWhatsAppCustomerSlip(e) {
+            if (e && typeof e.preventDefault === 'function') e.preventDefault();
+            try {
+                const custName = (document.getElementById('wa-cust-name').value || '').trim();
+                const custPhone = (document.getElementById('wa-cust-phone').value || '').trim();
+                const custCity = (document.getElementById('wa-cust-city').value || '').trim();
+                const custPay = (document.getElementById('wa-cust-pay').value || 'COD').trim();
+                const custAddress = (document.getElementById('wa-cust-address').value || '').trim();
+                const itemName = (document.getElementById('wa-item-name').value || '').trim();
+                const itemColor = (document.getElementById('wa-item-color').value || '-').trim();
+                const itemSize = (document.getElementById('wa-item-size').value || 'M').trim();
+                const itemQty = Math.max(1, Number(document.getElementById('wa-item-qty').value || 1));
+                const itemPrice = Math.max(0, Number(document.getElementById('wa-item-price').value || 0));
+                const deliveryFee = Math.max(0, Number(document.getElementById('wa-delivery-fee').value || 0));
+                const note = (document.getElementById('wa-order-note').value || '').trim();
+
+                if (!custName || !custPhone || !custCity || !custAddress || !itemName) {
+                    alert('Please fill in all required customer and item details.');
+                    return;
+                }
+
+                const subtotal = itemPrice * itemQty;
+                const totalAmount = subtotal + deliveryFee;
+                const oid = 'WA-' + Date.now().toString().slice(-7);
+                const nowStr = new Date().toLocaleString('en-GB');
+
+                const newOrder = {
+                    orderId: oid,
+                    voucherId: oid,
+                    source: 'WhatsApp',
+                    date: nowStr,
+                    status: 'Packing Pending',
+                    payType: custPay,
+                    name: custName,
+                    phone: custPhone,
+                    altPhone: '',
+                    city: custCity,
+                    province: 'Pakistan',
+                    postalCode: '',
+                    address: custAddress,
+                    subtotal: subtotal,
+                    deliveryCharges: deliveryFee,
+                    totalAmount: totalAmount,
+                    note: note,
+                    customer: {
+                        name: custName,
+                        phone: custPhone,
+                        city: custCity,
+                        address: custAddress
+                    },
+                    items: [
+                        {
+                            name: itemName,
+                            color: itemColor,
+                            size: itemSize,
+                            quantity: itemQty,
+                            price: itemPrice
+                        }
+                    ]
+                };
+
+                try {
+                    const localOrders = JSON.parse(localStorage.getItem('slao_orders') || '[]');
+                    localOrders.unshift(newOrder);
+                    localStorage.setItem('slao_orders', JSON.stringify(localOrders));
+                    slaoFsUpsert('orders', oid, newOrder);
+                } catch (err) {}
+
+                try {
+                    const apiBase = (typeof SLAO_API_BASE !== 'undefined' && SLAO_API_BASE) ? SLAO_API_BASE : '/api';
+                    const resp = await fetch(`${apiBase}/orders`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(newOrder)
+                    });
+                    if (resp && resp.ok) {
+                        const savedOrder = await resp.json();
+                        if (savedOrder && (savedOrder.orderId || savedOrder.voucherId)) {
+                            Object.assign(newOrder, savedOrder);
+                        }
+                    }
+                } catch (err) {}
+
+                if (!Array.isArray(window.ADMIN_ORDERS)) {
+                    window.ADMIN_ORDERS = [];
+                }
+                ADMIN_ORDERS = ADMIN_ORDERS.filter(x => (x.orderId || x.voucherId) !== oid);
+                ADMIN_ORDERS.unshift(newOrder);
+
+                if (typeof switchAdminTab === 'function') {
+                    switchAdminTab('orders');
+                } else if (typeof renderCurrentTab === 'function') {
+                    renderCurrentTab();
+                }
+
+                closeManualWhatsAppSlipModal();
+                openAdminSlipModal(oid);
+            } catch (err) {
+                alert('Could not generate slip: ' + (err && err.message ? err.message : err));
+            }
+        }
+    </script>
+
+</body>
+</html>

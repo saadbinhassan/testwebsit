@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - SLAO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { slao: { maroon: '#6b182b', maroonDark: '#4a0f1d', gold: '#d4af37', cream: '#fcf8f3', charcoal: '#1c1c1c' } },
+                    fontFamily: { serif: ['Cinzel', 'serif'], sans: ['Plus Jakarta Sans', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+<style>
+        img[src*="slao-logo"], .slao-logo-clickable {
+            cursor: pointer !important;
+        }
+</style>
+<style>
+        .copyable-text,
+        .copyable-text *,
+        a, a *,
+        button, button *,
+        [onclick], [onclick] *,
+        .cursor-pointer, .cursor-pointer *,
+        img[src*="slao-logo"], .slao-logo-clickable {
+            cursor: pointer !important;
+        }
+        input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"], input[type="url"], textarea {
+            cursor: text !important;
+        }
+</style>
+</head>
+<body class="bg-slao-cream text-gray-900 min-h-screen flex flex-col">
+    <header class="bg-white border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
+            <a href="index.html" class="flex-shrink-0 flex items-center gap-3">
+                <img src="images/slao-logo.png" alt="SLAO Collections" style="cursor: pointer;" class="slao-logo-clickable w-11 h-11 rounded-full object-cover border border-slao-gold shadow-sm cursor-pointer">
+                <div>
+                    <span class="font-serif text-2xl sm:text-3xl font-extrabold tracking-widest text-slao-maroon">SLAO</span>
+                    <span class="block text-[10px] tracking-[0.28em] font-semibold text-slao-gold uppercase -mt-1">Collections</span>
+                </div>
+            </a>
+            <div class="flex items-center gap-4 text-xs font-bold uppercase">
+                <a href="terms-and-conditions.html" class="text-gray-700 hover:text-slao-maroon">Terms &amp; Conditions</a>
+                <a href="index.html" class="px-4 py-2 bg-slao-maroon text-white rounded-xl">Back to Store</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto w-full p-6 sm:p-10 flex-grow">
+        <div class="bg-white p-8 rounded-3xl shadow-lg space-y-5 text-sm text-gray-700 leading-relaxed">
+            <h1 class="font-serif text-3xl font-bold text-slao-maroon">Privacy Policy</h1>
+            <p class="text-xs text-gray-500">Last Updated: 2026 &bull; SLAO (Wear Your Style)</p>
+            <h2 class="font-bold text-base text-slao-maroon">1. Information We Collect</h2>
+            <p>When you browse SLAO, sign in (including via Google Account), like products, submit reviews/complaints, or place an order, we collect your name, email address, profile picture, phone numbers, and shipping address to process and deliver your order accurately.</p>
+            <h2 class="font-bold text-base text-slao-maroon">2. How We Use Your Information</h2>
+            <p>Your information is used strictly to fulfill orders, provide parcel tracking updates, display verified reviews, respond to customer complaints, and personalize your account profile. We never sell or rent your personal data to third parties.</p>
+            <h2 class="font-bold text-base text-slao-maroon">3. Data Security &amp; Contact</h2>
+            <p>All customer records are stored securely in our store database. For privacy inquiries or data updates, contact Customer Care at <b>+92 3329975035</b>.</p>
+        </div>
+    </main>
+        <!-- Features / Value Proposition Banner -->
+    <section class="bg-slao-maroon text-white py-12 border-t border-slao-gold/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+                <a href="track-order.html" class="block space-y-2 group rounded-2xl p-2 hover:bg-white/10 transition cursor-pointer" title="Track Your Order">
+                    <i class="fa-solid fa-truck-fast text-3xl text-slao-gold mb-2 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-serif font-bold text-lg group-hover:text-slao-gold transition">Fast Delivery</h4>
+                    <p class="text-xs text-gray-300">Tap to Track Your Parcel &amp; Delivery Status</p>
+                </a>
+                <div onclick="openAuthenticQualityModal()" class="block space-y-2 group rounded-2xl p-2 hover:bg-white/10 transition cursor-pointer" title="Tap for 100% Authentic Quality Details">
+                    <i class="fa-solid fa-shield-halved text-3xl text-slao-gold mb-2 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-serif font-bold text-lg group-hover:text-slao-gold transition copyable-text">100% Authentic Quality</h4>
+                    <p class="text-xs text-gray-200 font-medium copyable-text">Premium fabric &amp; original designer prints</p>
+                    <p class="text-[11px] text-gray-300 leading-relaxed copyable-text">Pure breathable lawn, chiffon &amp; silk weaves with color-fast dyes, fine embroidery &amp; strict quality checks. <span class="underline text-slao-gold font-semibold">Tap for details</span></p>
+                </div>
+                <a href="track-order.html?openReturn=1" class="block space-y-2 group rounded-2xl p-2 hover:bg-white/10 transition cursor-pointer" title="7 Days Easy Return Policy">
+                    <i class="fa-solid fa-arrow-rotate-left text-3xl text-slao-gold mb-2 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-serif font-bold text-lg group-hover:text-slao-gold transition">7 Days Easy Return Policy</h4>
+                    <p class="text-xs text-gray-300">Eligible after order confirmation &amp; delivery</p>
+                </a>
+                <a href="tel:+923329975035" class="block space-y-2 group rounded-2xl p-2 hover:bg-white/10 transition cursor-pointer" title="Call Customer Care: +92 3329975035">
+                    <i class="fa-solid fa-headset text-3xl text-slao-gold mb-2 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-serif font-bold text-lg group-hover:text-slao-gold transition">24/7 Customer Care</h4>
+                    <p class="text-xs text-gray-300">Tap to Call: +92 3329975035</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-slao-charcoal text-gray-400 py-6 text-center text-xs">
+        &copy; 2026 SLAO (Wear Your Style) &bull; <a href="privacy-policy.html" class="text-slao-gold underline">Privacy Policy</a> &bull; <a href="terms-and-conditions.html" class="hover:text-slao-gold">Terms &amp; Conditions</a>
+    </footer>
+</body>
+</html>

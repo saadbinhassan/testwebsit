@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fabric Care Guide - SLAO Collections</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slao: { maroon: '#6b182b', maroonDark: '#4a0f1d', gold: '#d4af37', cream: '#fcf8f3', charcoal: '#1c1c1c' }
+                    },
+                    fontFamily: { serif: ['Cinzel', 'serif'], sans: ['Plus Jakarta Sans', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+<style>
+        img[src*="slao-logo"], .slao-logo-clickable {
+            cursor: pointer !important;
+        }
+</style>
+<style>
+        .copyable-text,
+        .copyable-text *,
+        a, a *,
+        button, button *,
+        [onclick], [onclick] *,
+        .cursor-pointer, .cursor-pointer *,
+        img[src*="slao-logo"], .slao-logo-clickable {
+            cursor: pointer !important;
+        }
+        input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"], input[type="url"], textarea {
+            cursor: text !important;
+        }
+</style>
+</head>
+<body class="bg-slao-cream text-gray-900 min-h-screen flex flex-col">
+    <!-- Top Announcement Bar -->
+    <div class="bg-slao-maroon text-white text-xs md:text-sm tracking-wider py-2 px-6 flex justify-between items-center">
+        <span class="hidden md:inline-block"><i class="fa-solid fa-sparkles mr-2"></i> Nationwide Delivery Across Pakistan</span>
+        <span class="w-full md:w-auto text-center font-semibold">MID-SUMMER SALE IS LIVE! UP TO 40% OFF</span>
+        <span class="hidden md:inline-block"><i class="fa-solid fa-phone mr-1"></i><a href="tel:+923329975035" class="hover:text-slao-gold transition">+92 3329975035</a></span>
+    </div>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
+            <a href="index.html" class="flex-shrink-0 flex items-center gap-3">
+                <img src="images/slao-logo.png" alt="SLAO Collections" style="cursor: pointer;" class="slao-logo-clickable w-11 h-11 rounded-full object-cover border border-slao-gold shadow-sm cursor-pointer">
+                <div>
+                    <span class="font-serif text-2xl sm:text-3xl font-extrabold tracking-widest text-slao-maroon">SLAO</span>
+                    <span class="block text-[10px] tracking-[0.28em] font-semibold text-slao-gold uppercase -mt-1">Collections</span>
+                </div>
+            </a>
+            <nav class="hidden lg:flex space-x-8 text-sm font-semibold tracking-wide uppercase">
+                <a href="index.html" class="text-gray-700 hover:text-slao-maroon py-1">New Arrivals</a>
+                <a href="collections/unstitched/index.html" class="text-gray-700 hover:text-slao-maroon py-1">Unstitched</a>
+                <a href="collections/ready-to-wear/index.html" class="text-gray-700 hover:text-slao-maroon py-1">Ready To Wear</a>
+                <a href="collections/western/index.html" class="text-gray-700 hover:text-slao-maroon py-1">Western</a>
+                <a href="fabric-care-guide.html" class="text-slao-maroon border-b-2 border-slao-maroon py-1 font-bold">Fabric Care Guide</a>
+            </nav>
+            <div class="flex items-center space-x-1.5 sm:space-x-3">
+                <button type="button" onclick="toggleTopSearch()" class="text-gray-700 hover:text-slao-maroon p-2" title="Search"><i class="fa-solid fa-magnifying-glass text-xl"></i></button>
+                <a href="account.html?tab=liked" class="text-gray-700 hover:text-slao-maroon p-2 relative" title="Liked Products">
+                    <i class="fa-regular fa-heart text-xl"></i>
+                    <span id="liked-count" class="absolute top-0 right-0 bg-slao-maroon text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                </a>
+                <a href="checkout.html" onclick="localStorage.setItem('slao_checkout_mode','CART')" class="text-gray-700 hover:text-slao-maroon p-2 relative" title="Shopping Cart">
+                    <i class="fa-solid fa-bag-shopping text-2xl"></i>
+                    <span id="cart-count" class="absolute top-0 right-0 bg-slao-maroon text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                </a>
+                <a href="account.html" class="text-gray-700 hover:text-slao-maroon p-2" title="Account Profile">
+                    <i id="header-profile-icon" class="fa-regular fa-user text-xl"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+
+
+    <main class="max-w-5xl mx-auto w-full p-4 sm:p-8 flex-grow space-y-6">
+        <div class="flex items-center justify-between">
+            <a href="index.html" class="text-sm font-bold text-slao-maroon hover:underline">&larr; Back to Store</a>
+            <span class="text-xs font-bold uppercase tracking-widest text-slao-gold">100% Authentic Quality Care</span>
+        </div>
+
+        <div class="bg-white p-6 sm:p-10 rounded-3xl shadow-lg space-y-6">
+            <div class="border-b pb-4">
+                <span class="text-xs font-bold uppercase tracking-widest text-slao-gold">Preserve Your Luxury Wardrobe</span>
+                <h1 class="font-serif text-3xl font-bold text-slao-maroon mt-1">SLAO Fabric Care Guide</h1>
+                <p class="text-xs sm:text-sm text-gray-600 mt-1">Follow these care instructions to maintain the color vibrancy, embroidery, and softness of our premium fabrics &amp; original designer prints.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs sm:text-sm">
+                <div class="p-5 rounded-2xl bg-slao-cream border border-slao-gold/40 space-y-2">
+                    <h2 class="font-serif font-bold text-lg text-slao-maroon"><i class="fa-solid fa-shirt mr-2 text-slao-gold"></i>Embroidered Lawn &amp; Cotton</h2>
+                    <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                        <li>Hand wash separately in cold water using a mild liquid detergent.</li>
+                        <li>Do not soak for prolonged periods or use harsh bleach/stain removers.</li>
+                        <li>Dry inside-out in shade to protect original designer prints from direct sunlight.</li>
+                        <li>Iron on medium heat from the reverse side, especially over zari or thread embroidery.</li>
+                    </ul>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-slao-cream border border-slao-gold/40 space-y-2">
+                    <h2 class="font-serif font-bold text-lg text-slao-maroon"><i class="fa-solid fa-sparkles mr-2 text-slao-gold"></i>Chiffon, Organza &amp; Festive Wear</h2>
+                    <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                        <li>Dry clean only to preserve delicate handwork, embellishments, and fabric drape.</li>
+                        <li>Avoid wringing or twisting wet chiffon/organza garments.</li>
+                        <li>Use steam ironing on low setting with a protective pressing cloth.</li>
+                        <li>Store folded in breathable muslin or cotton garment bags away from moisture.</li>
+                    </ul>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-slao-cream border border-slao-gold/40 space-y-2">
+                    <h2 class="font-serif font-bold text-lg text-slao-maroon"><i class="fa-solid fa-layer-group mr-2 text-slao-gold"></i>Jacquard, Silk &amp; Linen Co-Ords</h2>
+                    <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                        <li>Gentle cold hand wash or professional dry clean recommended for silk blends.</li>
+                        <li>Do not tumble dry; lay flat or hang on padded hangers to prevent stretching.</li>
+                        <li>Avoid spraying perfumes or deodorants directly onto silk or jacquard weaves.</li>
+                    </ul>
+                </div>
+
+                <div class="p-5 rounded-2xl bg-slao-cream border border-slao-gold/40 space-y-2">
+                    <h2 class="font-serif font-bold text-lg text-slao-maroon"><i class="fa-solid fa-shield-halved mr-2 text-slao-gold"></i>Pre-Stitching Tip (Unstitched)</h2>
+                    <ul class="list-disc pl-5 space-y-1 text-gray-700">
+                        <li>Soak unstitched cotton/lawn fabric in plain cold water for 20&ndash;30 minutes before tailoring to allow natural shrinkage.</li>
+                        <li>Dry completely in shade and press gently before cutting.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-slao-charcoal text-gray-400 py-6 text-center text-xs mt-auto">
+        &copy; 2026 SLAO Collections &bull;
+        <a href="fabric-care-guide.html" class="text-slao-gold underline">Fabric Care Guide</a> &bull;
+        <a href="privacy-policy.html" class="hover:text-slao-gold underline">Privacy Policy</a> &bull;
+        <a href="terms-and-conditions.html" class="hover:text-slao-gold underline">Terms &amp; Conditions</a>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="store.js"></script>
+</body>
+</html>

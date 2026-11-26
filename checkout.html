@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - SLAO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slao: { maroon: '#6b182b', maroonDark: '#4a0f1d', gold: '#d4af37', cream: '#fcf8f3', charcoal: '#1c1c1c' }
+                    },
+                    fontFamily: { serif: ['Cinzel', 'serif'], sans: ['Plus Jakarta Sans', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::selection { background-color: #6b182b; color: #f3e8c9; }
+        ::-moz-selection { background-color: #6b182b; color: #f3e8c9; }
+        .copyable-text { cursor: pointer !important; }
+    </style>
+<style>
+        img[src*="slao-logo"], .slao-logo-clickable {
+            cursor: pointer !important;
+        }
+</style>
+<style>
+        .copyable-text,
+        .copyable-text *,
+        a, a *,
+        button, button *,
+        [onclick], [onclick] *,
+        .cursor-pointer, .cursor-pointer *,
+        img[src*="slao-logo"], .slao-logo-clickable {
+            cursor: pointer !important;
+        }
+        input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"], input[type="url"], textarea {
+            cursor: text !important;
+        }
+</style>
+</head>
+<body class="bg-slao-cream text-gray-900 min-h-screen flex flex-col">
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-slao-maroon text-white text-xs md:text-sm tracking-wider py-2 px-6 flex justify-between items-center">
+        <span class="hidden md:inline-block copyable-text"><i class="fa-solid fa-sparkles mr-2"></i> Nationwide Delivery Across Pakistan</span>
+        <span class="w-full md:w-auto text-center font-semibold copyable-text">MID-SUMMER SALE IS LIVE! UP TO 40% OFF</span>
+        <span class="hidden md:inline-block"><i class="fa-solid fa-phone mr-1"></i><a href="tel:+923329975035" class="hover:text-slao-gold transition">+92 3329975035</a></span>
+    </div>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
+            <div class="flex items-center lg:hidden">
+                <button id="mobile-menu-btn" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="p-2 text-slao-charcoal hover:text-slao-maroon"><i class="fa-solid fa-bars text-2xl"></i></button>
+            </div>
+
+            <a href="index.html" class="flex-shrink-0 flex items-center gap-3">
+                <img src="images/slao-logo.png" alt="SLAO Collections" style="cursor: pointer;" class="slao-logo-clickable w-11 h-11 rounded-full object-cover border border-slao-gold shadow-sm cursor-pointer">
+                <div>
+                    <span class="font-serif text-2xl sm:text-3xl font-extrabold tracking-widest text-slao-maroon">SLAO</span>
+                    <span class="block text-[10px] tracking-[0.28em] font-semibold text-slao-gold uppercase -mt-1">Collections</span>
+                </div>
+            </a>
+
+            <nav class="hidden lg:flex space-x-8 text-sm font-semibold tracking-wide uppercase">
+                <a href="index.html" class="text-gray-700 hover:text-slao-maroon py-1">New Arrivals</a>
+                <a href="collections/unstitched/index.html" class="text-gray-700 hover:text-slao-maroon py-1">Unstitched</a>
+                <a href="collections/ready-to-wear/index.html" class="text-gray-700 hover:text-slao-maroon py-1">Ready To Wear</a>
+                <a href="collections/western/index.html" class="text-gray-700 hover:text-slao-maroon py-1">Western</a>
+                <a href="collections/sale/index.html" class="text-rose-600 font-bold hover:text-rose-700 py-1"><i class="fa-solid fa-fire text-xs mr-1"></i> Sale %</a>
+            </nav>
+
+            <div class="flex items-center space-x-1.5 sm:space-x-3">
+                <button type="button" onclick="toggleTopSearch()" class="text-gray-700 hover:text-slao-maroon p-2" title="Search"><i class="fa-solid fa-magnifying-glass text-xl"></i></button>
+                <a href="account.html?tab=liked" class="text-gray-700 hover:text-slao-maroon p-2 relative" title="Liked Products">
+                    <i class="fa-regular fa-heart text-xl"></i>
+                    <span id="liked-count" class="absolute top-0 right-0 bg-slao-maroon text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                </a>
+                <a href="checkout.html" onclick="localStorage.setItem('slao_checkout_mode','CART')" class="text-gray-700 hover:text-slao-maroon p-2 relative" title="Shopping Cart">
+                    <i class="fa-solid fa-bag-shopping text-2xl"></i>
+                    <span id="cart-count" class="absolute top-0 right-0 bg-slao-maroon text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                </a>
+                <a href="account.html" class="text-gray-700 hover:text-slao-maroon p-2" title="Account / Login / Sign Up">
+                    <i id="header-profile-icon" class="fa-regular fa-user text-xl"></i>
+                </a>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden lg:hidden bg-white border-b border-gray-200 px-4 pt-2 pb-6 space-y-2">
+            <a href="index.html" class="block py-2 px-3 text-base font-semibold text-slao-maroon bg-slao-cream rounded-md">New Arrivals</a>
+            <a href="collections/unstitched/index.html" class="block py-2 px-3 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-md">Unstitched Lawn</a>
+            <a href="collections/ready-to-wear/index.html" class="block py-2 px-3 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-md">Ready To Wear</a>
+            <a href="collections/western/index.html" class="block py-2 px-3 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-md">Western Collection</a>
+            <a href="collections/sale/index.html" class="block py-2 px-3 text-base font-semibold text-rose-600 hover:bg-rose-50 rounded-md">Sale</a>
+        </div>
+    </header>
+
+
+    <main class="max-w-6xl mx-auto w-full p-4 sm:p-8 flex-grow">
+        <a href="index.html" class="inline-flex items-center text-sm font-semibold text-slao-maroon mb-6 hover:underline">
+            <i class="fa-solid fa-arrow-left mr-2"></i> Back to Store
+        </a>
+
+        <div id="empty-cart-full-box" class="hidden max-w-lg mx-auto bg-white p-8 rounded-3xl shadow-lg text-center space-y-3">
+            <div class="w-16 h-16 mx-auto rounded-full bg-slao-cream border border-slao-gold/50 flex items-center justify-center text-slao-maroon text-2xl">
+                <i class="fa-solid fa-bag-shopping"></i>
+            </div>
+            <h1 class="font-serif text-2xl font-bold text-slao-maroon">Your Cart is Empty</h1>
+            <p class="text-xs text-gray-500">There are no products in your cart right now. Add a product first to open delivery details.</p>
+            <a href="index.html" class="inline-block px-6 py-3 bg-slao-maroon hover:bg-slao-maroonDark text-white text-xs font-bold rounded-xl uppercase tracking-wider transition">Continue Shopping</a>
+        </div>
+
+        <div id="checkout-main-grid" class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+            <!-- Left Column: Checkout Form & Order Slip -->
+            <div id="checkout-delivery-section" class="lg:col-span-2 bg-white p-6 sm:p-8 rounded-3xl shadow-lg space-y-5">
+                <h1 class="text-2xl font-bold text-slao-maroon copyable-text">Checkout &amp; Delivery Details</h1>
+
+                <div class="space-y-3">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-gray-500 copyable-text">Delivery Information</h2>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <input id="cust-first-name" type="text" placeholder="First Name *" class="w-full p-3 text-sm border rounded-xl">
+                        <input id="cust-last-name" type="text" placeholder="Last Name *" class="w-full p-3 text-sm border rounded-xl">
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <input id="cust-phone" type="tel" placeholder="Primary Contact Number (03xx...) *" class="w-full p-3 text-sm border rounded-xl">
+                        </div>
+                        <div>
+                            <input id="cust-alt-phone" type="tel" placeholder="Alternative Contact Number (Different) *" class="w-full p-3 text-sm border rounded-xl">
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-gray-500 copyable-text">Please provide two different contact numbers so our courier can reach you if the primary number is unreachable.</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <select id="cust-province" class="w-full p-3 text-sm border rounded-xl bg-white text-gray-700">
+                            <option value="">Select Province *</option>
+                            <option value="Sindh">Sindh</option>
+                            <option value="Punjab">Punjab</option>
+                            <option value="Khyber Pakhtunkhwa">Khyber Pakhtunkhwa</option>
+                            <option value="Balochistan">Balochistan</option>
+                            <option value="Gilgit-Baltistan">Gilgit-Baltistan</option>
+                            <option value="Azad Jammu &amp; Kashmir">Azad Jammu &amp; Kashmir</option>
+                            <option value="Islamabad Capital Territory">Islamabad Capital Territory</option>
+                        </select>
+                        <input id="cust-city" type="text" placeholder="City (e.g. Karachi, Lahore) *" class="w-full p-3 text-sm border rounded-xl">
+                        <input id="cust-postal" type="text" placeholder="Postal / ZIP Code *" class="w-full p-3 text-sm border rounded-xl">
+                    </div>
+
+                    <textarea id="cust-address" rows="2" placeholder="Complete Street / House Delivery Address *" class="w-full p-3 text-sm border rounded-xl"></textarea>
+
+                    <div class="space-y-2.5 pt-2 text-xs text-gray-700">
+                        <label class="flex items-center gap-2.5 cursor-pointer select-none">
+                            <input id="save-info-next-time" type="checkbox" class="w-4 h-4 accent-slao-maroon rounded">
+                            <span>Save this information for next time</span>
+                        </label>
+                        <label class="flex items-center gap-2.5 cursor-pointer select-none">
+                            <input id="text-news-offers" type="checkbox" class="w-4 h-4 accent-slao-maroon rounded">
+                            <span>Text me with news and offers</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="space-y-3 pt-2">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-gray-500 copyable-text">Select Payment Method</h2>
+
+                    <label class="flex items-center justify-between p-3.5 border rounded-xl cursor-pointer bg-gray-50">
+                        <div class="flex items-center gap-3">
+                            <input type="radio" name="payType" value="COD" checked onchange="switchPayment(); recalculateTotals();">
+                            <span class="text-sm font-bold copyable-text">Cash on Delivery (COD)</span>
+                        </div>
+                        <span class="text-xs font-extrabold text-slao-maroon copyable-text">+Rs. 80</span>
+                    </label>
+
+                    <label class="flex items-center gap-3 p-3.5 border rounded-xl cursor-pointer bg-gray-50">
+                        <input type="radio" name="payType" value="CARD" onchange="switchPayment(); recalculateTotals();">
+                        <span class="text-sm font-bold copyable-text">Debit / Credit Card Payment</span>
+                    </label>
+                </div>
+
+                <!-- Card Payment Details Box -->
+                <div id="box-card" class="hidden p-4 border border-slao-gold rounded-2xl bg-amber-50/40 space-y-3">
+                    <p class="text-xs font-bold uppercase text-slao-maroon copyable-text">Card Payment Details</p>
+                    <input id="card-name" type="text" placeholder="Cardholder Full Name *" class="w-full p-2.5 text-sm border rounded-xl bg-white">
+                    <input id="card-num" type="text" maxlength="19" placeholder="Card Number (16 digits) *" class="w-full p-2.5 text-sm border rounded-xl bg-white">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <input id="card-exp" type="text" maxlength="5" placeholder="Expiry (MM/YY) *" class="w-full p-2.5 text-sm border rounded-xl bg-white">
+                        <input id="card-cvv" type="password" maxlength="4" placeholder="CVV / CVC *" class="w-full p-2.5 text-sm border rounded-xl bg-white">
+                        <input id="card-postal" type="text" maxlength="10" placeholder="Billing Postal Code *" class="w-full p-2.5 text-sm border rounded-xl bg-white">
+                    </div>
+                </div>
+
+                <!-- 7 Days Easy Return Policy Banner on Checkout -->
+                <div class="p-3.5 rounded-2xl bg-slao-cream border border-slao-gold/60 flex items-start gap-3 text-xs text-gray-700">
+                    <i class="fa-solid fa-arrow-rotate-left text-slao-maroon text-base mt-0.5"></i>
+                    <div>
+                        <p class="font-bold text-slao-maroon uppercase">7 Days Easy Return Policy</p>
+                        <p class="mt-0.5">Every confirmed order is covered by our 7 Days Easy Return &amp; Exchange Policy once delivered.</p>
+                    </div>
+                </div>
+
+                <button type="button" onclick="openReviewModal()" class="w-full py-4 bg-slao-maroon hover:bg-slao-maroonDark text-white font-bold rounded-xl text-sm uppercase tracking-wider shadow-lg transition">
+                    Confirm Order
+                </button>
+
+                <!-- Order Confirmation Notification Banner -->
+                <div id="order-toast" class="hidden p-4 bg-emerald-700 text-white rounded-2xl shadow-lg flex items-center justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-circle-check text-2xl text-emerald-200"></i>
+                        <div>
+                            <p class="font-bold text-sm uppercase">Order Confirmed!</p>
+                            <p id="order-toast-msg" class="text-xs text-emerald-100"></p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="document.getElementById('order-toast').classList.add('hidden')" class="text-emerald-200 hover:text-white">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Customer Order Slip with QR Code -->
+                <div id="order-slip-box" class="hidden border-2 border-slao-maroon rounded-2xl bg-white p-6 shadow-xl space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b pb-3 gap-2">
+                        <div>
+                            <span class="font-serif text-2xl font-extrabold tracking-widest text-slao-maroon">SLAO</span>
+                            <p class="text-[11px] uppercase tracking-widest text-slao-gold font-bold">Customer Order Slip</p>
+                            <p id="slip-date" class="text-xs text-gray-500"></p>
+                        </div>
+                        <div class="sm:text-right">
+                            <p class="text-xs text-gray-500">Order / Tracking ID</p>
+                            <p id="slip-order-id" class="font-mono text-lg font-extrabold text-slao-maroon"></p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-center bg-slao-cream p-4 rounded-xl border border-slao-gold/40">
+                        <div class="sm:col-span-2 space-y-1 text-xs">
+                            <p class="font-bold text-slao-maroon uppercase mb-1">Customer &amp; Delivery Details</p>
+                            <p><b>Customer Name:</b> <span id="slip-cust-name"></span></p>
+                            <p><b>Primary Contact:</b> <span id="slip-cust-phone"></span></p>
+                            <p><b>Alternative Contact:</b> <span id="slip-cust-alt-phone"></span></p>
+                            <p><b>City / Province:</b> <span id="slip-cust-location"></span></p>
+                            <p><b>Address:</b> <span id="slip-cust-address"></span></p>
+                            <p><b>Payment Method:</b> <span id="slip-pay-method"></span></p>
+                            <p><b>Order Status:</b> <span id="slip-status-badge" class="font-bold text-amber-700">Packing Pending</span></p>
+                        </div>
+                        <div class="flex flex-col items-center justify-center bg-white p-3 rounded-xl border text-center">
+                            <img id="slip-qr-img" src="" alt="Track Order QR Code" class="w-28 h-28 object-contain">
+                            <span class="text-[10px] font-bold text-gray-600 mt-1 uppercase">Scan QR to Track Order</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <p class="text-xs font-bold text-slao-maroon uppercase mb-2">Order Details</p>
+                        <div id="slip-items-list" class="divide-y text-xs border rounded-xl px-3 bg-gray-50"></div>
+                        <div class="flex justify-between items-center pt-3 mt-2 border-t text-sm font-extrabold text-slao-maroon">
+                            <span>Grand Total</span>
+                            <span id="slip-grand-total"></span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3 pt-1">
+                        <a id="slip-track-btn" href="track-order.html" class="flex-1 text-center py-2.5 px-4 bg-slao-maroon hover:bg-slao-maroonDark text-white text-xs font-bold rounded-xl uppercase tracking-wider">
+                            Track Order
+                        </a>
+                        <button id="slip-cancel-btn" type="button" onclick="openCancelModal()" class="py-2.5 px-4 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl uppercase tracking-wider">
+                            Cancel Order
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Post-Order Customer Review Section -->
+                <div id="post-order-review-box" class="hidden p-5 bg-slao-cream border border-slao-gold rounded-2xl space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-sm font-bold text-slao-maroon uppercase copyable-text"><i class="fa-solid fa-star text-slao-gold mr-1.5"></i> Rate &amp; Review Your Order</h3>
+                        <span class="text-[11px] font-semibold text-emerald-700 copyable-text">Verified Purchase</span>
+                    </div>
+                    <p class="text-xs text-gray-600 copyable-text">Thank you for shopping with SLAO! Share your experience for the item(s) you just ordered:</p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <select id="review-product-select" class="w-full p-2.5 text-xs border rounded-xl bg-white"></select>
+                        <select id="review-rating" class="w-full p-2.5 text-xs border rounded-xl bg-white font-semibold">
+                            <option value="5">★★★★★ (5/5 - Excellent)</option>
+                            <option value="4">★★★★☆ (4/5 - Very Good)</option>
+                            <option value="3">★★★☆☆ (3/5 - Good)</option>
+                            <option value="2">★★☆☆☆ (2/5 - Fair)</option>
+                            <option value="1">★☆☆☆☆ (1/5 - Poor)</option>
+                        </select>
+                    </div>
+
+                    <textarea id="review-comment" rows="2" placeholder="Write your review about fabric quality, fit, or service..." class="w-full p-3 text-xs border rounded-xl bg-white"></textarea>
+
+                    <button type="button" onclick="submitOrderReview()" class="px-5 py-2.5 bg-slao-maroon hover:bg-slao-maroonDark text-white text-xs font-bold rounded-xl uppercase tracking-wider">
+                        Submit Review
+                    </button>
+
+                    <p id="review-submitted-msg" class="hidden text-xs font-bold text-emerald-700 copyable-text">
+                        Thank you! Your review has been published on the product page.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right Column: Order Summary -->
+            <div class="lg:col-span-1 lg:sticky lg:top-24 space-y-6">
+                <div class="bg-white p-6 rounded-3xl shadow-lg space-y-4">
+                    <h2 class="text-lg font-bold text-slao-maroon border-b pb-3 copyable-text">Order Summary</h2>
+                    <div id="summary-items" class="space-y-3 text-sm"></div>
+                    <div class="border-t pt-3 space-y-2 text-sm">
+                        <div class="flex justify-between text-gray-600">
+                            <span class="copyable-text">Subtotal</span>
+                            <span id="summary-subtotal" class="font-bold text-gray-900 copyable-text"></span>
+                        </div>
+                        <div id="row-cod-fee" class="flex justify-between text-gray-600">
+                            <span class="copyable-text">Cash on Delivery Fee</span>
+                            <span id="summary-cod" class="font-semibold text-slao-maroon copyable-text">Rs. 80</span>
+                        </div>
+                        <div class="flex justify-between font-bold text-base pt-2 border-t">
+                            <span class="copyable-text">Grand Total (PKR)</span>
+                            <span id="summary-total" class="text-slao-maroon copyable-text"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- ORDER REVIEW POPUP MODAL (Left: Customer Details | Right: Product Details | Bottom: Green Confirm + Edit) -->
+    <div id="review-order-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-3xl w-full overflow-hidden border-2 border-slao-maroon my-auto">
+            <div class="bg-slao-maroon text-white px-6 py-4 flex items-center justify-between">
+                <div>
+                    <h3 class="font-serif text-lg sm:text-xl font-bold">Review Your Order Details</h3>
+                    <p class="text-xs text-slao-gold">Please verify your delivery details and suit selection before confirming</p>
+                </div>
+                <button type="button" onclick="closeReviewModal()" class="text-white/80 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Left Side: Customer Details -->
+                <div class="bg-slao-cream p-4 rounded-2xl border border-slao-gold/50 space-y-2 text-xs">
+                    <h4 class="font-bold text-slao-maroon uppercase tracking-wider border-b pb-2 mb-2">
+                        <i class="fa-solid fa-user-check mr-1.5"></i> Customer &amp; Delivery Details
+                    </h4>
+                    <p><b>Full Name:</b> <span id="rev-cust-name"></span></p>
+                    <p><b>Primary Contact:</b> <span id="rev-cust-phone"></span></p>
+                    <p><b>Alternative Contact:</b> <span id="rev-cust-alt-phone"></span></p>
+                    <p><b>Province:</b> <span id="rev-cust-province"></span></p>
+                    <p><b>City:</b> <span id="rev-cust-city"></span></p>
+                    <p><b>Postal Code:</b> <span id="rev-cust-postal"></span></p>
+                    <p><b>Delivery Address:</b> <span id="rev-cust-address"></span></p>
+                    <p><b>Payment Method:</b> <span id="rev-pay-method" class="font-bold text-slao-maroon"></span></p>
+                </div>
+
+                <!-- Right Side: Product / Suit Details -->
+                <div class="bg-gray-50 p-4 rounded-2xl border space-y-3 text-xs flex flex-col justify-between">
+                    <div>
+                        <h4 class="font-bold text-slao-maroon uppercase tracking-wider border-b pb-2 mb-3">
+                            <i class="fa-solid fa-shirt mr-1.5"></i> Suit &amp; Order Details
+                        </h4>
+                        <div id="rev-products-list" class="space-y-3 max-h-60 overflow-y-auto pr-1"></div>
+                    </div>
+                    <div class="border-t pt-3 space-y-1">
+                        <div class="flex justify-between text-gray-600">
+                            <span>Subtotal</span>
+                            <span id="rev-subtotal" class="font-bold"></span>
+                        </div>
+                        <div class="flex justify-between text-gray-600">
+                            <span>COD Charges</span>
+                            <span id="rev-cod" class="font-bold"></span>
+                        </div>
+                        <div class="flex justify-between text-sm font-extrabold text-slao-maroon pt-1 border-t">
+                            <span>Total Payable</span>
+                            <span id="rev-grand-total"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="px-6 py-4 bg-gray-50 border-t flex flex-col sm:flex-row justify-end gap-3">
+                <button type="button" onclick="closeReviewModal()" class="px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-xl text-xs uppercase tracking-wider transition">
+                    <i class="fa-solid fa-pen-to-square mr-1.5"></i> Edit
+                </button>
+                <button type="button" onclick="finalizeConfirmedOrder()" class="px-7 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider shadow-md transition">
+                    <i class="fa-solid fa-circle-check mr-1.5"></i> Confirm Order
+                </button>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- DELIVERY VALIDATION ERROR POPUP MODAL -->
+    <div id="delivery-error-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border-2 border-rose-600 animate-bounce-once">
+            <div class="bg-rose-600 text-white px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                    <h3 class="font-serif text-lg font-bold">Delivery Details Error</h3>
+                </div>
+                <button type="button" onclick="closeDeliveryErrorModal()" class="text-white/80 hover:text-white text-lg">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 text-xs sm:text-sm">
+                <p class="font-semibold text-gray-800">Please fix the following issue(s) in your delivery details:</p>
+                <ul id="delivery-error-list" class="list-disc pl-5 space-y-1.5 text-rose-700 font-medium bg-rose-50 p-3.5 rounded-2xl border border-rose-200"></ul>
+                <div class="flex justify-end pt-1">
+                    <button type="button" onclick="closeDeliveryErrorModal()" class="px-6 py-2.5 bg-slao-maroon hover:bg-slao-maroonDark text-white font-bold rounded-xl text-xs uppercase tracking-wider">
+                        OK, Fix Details
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CANCEL ORDER MODAL WITH REASONS FORM -->
+    <div id="cancel-order-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-rose-300">
+            <div class="bg-rose-700 text-white px-6 py-4 flex items-center justify-between">
+                <h3 class="font-serif text-lg font-bold">Cancel Order Request</h3>
+                <button type="button" onclick="closeCancelModal()" class="text-white/80 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6 space-y-4 text-xs">
+                <p class="text-gray-600">Please select a reason for cancelling or returning order <b id="cancel-modal-oid" class="text-slao-maroon"></b>:</p>
+                <div>
+                    <label class="block font-bold uppercase text-gray-700 mb-1.5">Select Reason *</label>
+                    <select id="cancel-reason-select" class="w-full p-3 border rounded-xl bg-white">
+                        <option value="">-- Choose a Reason --</option>
+                        <option value="Ordered wrong size or color">Ordered wrong size or color</option>
+                        <option value="Changed my mind / No longer needed">Changed my mind / No longer needed</option>
+                        <option value="Found a better alternative">Found a better alternative</option>
+                        <option value="Delivery timeline does not suit me">Delivery timeline does not suit me</option>
+                        <option value="Duplicate order placed by mistake">Duplicate order placed by mistake</option>
+                        <option value="Other reason">Other reason</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold uppercase text-gray-700 mb-1.5">Additional Comments (Optional)</label>
+                    <textarea id="cancel-reason-notes" rows="2" placeholder="Write any extra details here..." class="w-full p-3 border rounded-xl"></textarea>
+                </div>
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="button" onclick="closeCancelModal()" class="px-5 py-2.5 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-xl uppercase">Keep Order</button>
+                    <button type="button" onclick="submitOrderCancellation()" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl uppercase">Submit Cancellation</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features / Value Proposition Banner -->
+    <section class="bg-slao-maroon text-white py-12 border-t border-slao-gold/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+                <a href="track-order.html" class="block space-y-2 group rounded-2xl p-2 hover:bg-white/10 transition cursor-pointer" title="Track Your Order">
+                    <i class="fa-solid fa-truck-fast text-3xl text-slao-gold mb-2 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-serif font-bold text-lg group-hover:text-slao-gold transition">Fast Delivery</h4>
+                    <p class="text-xs text-gray-300">Tap to Track Your Parcel &amp; Delivery Status</p>
+                </a>
+                <div onclick="openAuthenticQualityModal()" class="block space-y-2 group rounded-2xl p-2 hover:bg-white/10 transition cursor-pointer" title="Tap for 100% Authentic Quality Details">
+                    <i class="fa-solid fa-shield-halved text-3xl text-slao-gold mb-2 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-serif font-bold text-lg group-hover:text-slao-gold transition copyable-text">100% Authentic Quality</h4>
+                    <p class="text-xs text-gray-200 font-medium copyable-text">Premium fabric &amp; original designer prints</p>
+                    <p class="text-[11px] text-gray-300 leading-relaxed copyable-text">Pure breathable lawn, chiffon &amp; silk weaves with color-fast dyes, fine embroidery &amp; strict quality checks. <span class="underline text-slao-gold font-semibold">Tap for details</span></p>
+                </div>
+                <a href="track-order.html?openReturn=1" class="block space-y-2 group rounded-2xl p-2 hover:bg-white/10 transition cursor-pointer" title="7 Days Easy Return Policy">
+                    <i class="fa-solid fa-arrow-rotate-left text-3xl text-slao-gold mb-2 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-serif font-bold text-lg group-hover:text-slao-gold transition">7 Days Easy Return Policy</h4>
+                    <p class="text-xs text-gray-300">Eligible after order confirmation &amp; delivery</p>
+                </a>
+                <a href="tel:+923329975035" class="block space-y-2 group rounded-2xl p-2 hover:bg-white/10 transition cursor-pointer" title="Call Customer Care: +92 3329975035">
+                    <i class="fa-solid fa-headset text-3xl text-slao-gold mb-2 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-serif font-bold text-lg group-hover:text-slao-gold transition">24/7 Customer Care</h4>
+                    <p class="text-xs text-gray-300">Tap to Call: +92 3329975035</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slao-charcoal text-gray-300 pt-16 pb-8 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-gray-800">
+                <div class="lg:col-span-2 space-y-4">
+                    <span class="font-serif text-4xl font-extrabold tracking-widest text-white">SLAO</span>
+                    <span class="block text-xs tracking-[0.3em] font-semibold text-slao-gold uppercase -mt-2">Wear Your Style</span>
+                    <p class="text-sm text-gray-400 font-light pr-6 leading-relaxed copyable-text">
+                        SLAO brings you high-end pret, unstitched luxury fabrics, and contemporary fashion designed to make every moment memorable. Blend tradition with modern flair.
+                    </p>
+                    <div class="flex space-x-4 pt-2">
+                        <a href="#" class="w-9 h-9 rounded-full bg-gray-800 hover:bg-slao-maroon text-white flex items-center justify-center transition"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-gray-800 hover:bg-slao-maroon text-white flex items-center justify-center transition"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://wa.me/923329975035" target="_blank" class="w-9 h-9 rounded-full bg-gray-800 hover:bg-slao-maroon text-white flex items-center justify-center transition"><i class="fa-brands fa-whatsapp"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-gray-800 hover:bg-slao-maroon text-white flex items-center justify-center transition"><i class="fa-brands fa-tiktok"></i></a>
+                    </div>
+                </div>
+
+                <div>
+                    <h5 class="text-white font-serif font-bold text-base mb-4 tracking-wider uppercase copyable-text">Shop Categories</h5>
+                    <ul class="space-y-2.5 text-sm">
+                        <li><a href="collections/unstitched/index.html" class="hover:text-slao-gold transition">Unstitched 3-Piece</a></li>
+                        <li><a href="collections/ready-to-wear/index.html" class="hover:text-slao-gold transition">Stitched Pret Kurtis</a></li>
+                        <li><a href="collections/ready-to-wear/index.html" class="hover:text-slao-gold transition">Luxury Festive Wear</a></li>
+                        <li><a href="collections/western/index.html" class="hover:text-slao-gold transition">Western Collection</a></li>
+                        <li><a href="collections/sale/index.html" class="hover:text-slao-gold transition">Sale / Clearance</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-white font-serif font-bold text-base mb-4 tracking-wider uppercase copyable-text">Customer Support</h5>
+                    <ul class="space-y-2.5 text-sm">
+                        <li><a href="tel:+923329975035" class="hover:text-slao-gold transition">Call Customer Care (+92 3329975035)</a></li>
+                        <li><a href="track-order.html" class="hover:text-slao-gold transition">Track Your Order</a></li>
+                        <li><a href="track-order.html?openReturn=1" class="hover:text-slao-gold transition">7 Days Easy Return Policy</a></li>
+                        <li><a href="fabric-care-guide.html" class="hover:text-slao-gold transition">Fabric Care Guide</a></li>
+                        <li><button type="button" onclick="openSizeGuideModal()" class="hover:text-slao-gold transition text-left">Outfit Size Guide</button></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h5 class="text-white font-serif font-bold text-base mb-4 tracking-wider uppercase copyable-text">Stay Updated</h5>
+                    <p class="text-xs text-gray-400 mb-3 copyable-text">Subscribe to receive exclusive offers and luxury collection launches.</p>
+                    <form onsubmit="event.preventDefault(); alert('Thank you for subscribing to SLAO updates!');" class="space-y-2">
+                        <input type="email" required placeholder="Enter your email" class="w-full px-3 py-2 bg-gray-800 text-white rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-slao-gold">
+                        <button type="submit" class="w-full py-2 bg-slao-maroon hover:bg-slao-maroonDark text-white text-xs font-semibold rounded-lg uppercase tracking-wider transition">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="mt-8 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 gap-4">
+                <p class="copyable-text">&copy; 2026 SLAO (Wear Your Style). All Rights Reserved.</p>
+                <div class="flex flex-wrap items-center gap-4 text-xs text-gray-400">
+                    <a href="privacy-policy.html" class="hover:text-slao-gold transition">Privacy Policy</a>
+                    <span>&bull;</span>
+                    <a href="terms-and-conditions.html" class="hover:text-slao-gold transition">Terms &amp; Conditions</a>
+                </div>
+                <div class="flex space-x-4 text-lg text-gray-400">
+                    <i class="fa-brands fa-cc-visa"></i>
+                    <i class="fa-brands fa-cc-mastercard"></i>
+                    <i class="fa-solid fa-money-bill-wave" title="Cash on Delivery Available"></i>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="store.js"></script>
+    <script>
+        updateHeaderCounts();
+        const savedCheckoutInfo = JSON.parse(localStorage.getItem('slao_saved_checkout') || 'null');
+        if (savedCheckoutInfo) {
+            document.getElementById('cust-first-name').value = savedCheckoutInfo.firstName || '';
+            document.getElementById('cust-last-name').value = savedCheckoutInfo.lastName || '';
+            document.getElementById('cust-phone').value = savedCheckoutInfo.phone || '';
+            document.getElementById('cust-alt-phone').value = savedCheckoutInfo.altPhone || '';
+            document.getElementById('cust-province').value = savedCheckoutInfo.province || '';
+            document.getElementById('cust-city').value = savedCheckoutInfo.city || '';
+            document.getElementById('cust-postal').value = savedCheckoutInfo.postalCode || '';
+            document.getElementById('cust-address').value = savedCheckoutInfo.address || '';
+            document.getElementById('save-info-next-time').checked = true;
+            if (savedCheckoutInfo.textOffers) {
+                document.getElementById('text-news-offers').checked = true;
+            }
+        }
+        const mode = localStorage.getItem('slao_checkout_mode') || 'SINGLE';
+        let orderItems = [];
+        let lastConfirmedOrder = null;
+        let pendingOrderDraft = null;
+
+        if (mode === 'CART') {
+            orderItems = getCart();
+        } else {
+            const single = JSON.parse(localStorage.getItem('slao_buy_now'));
+            orderItems = single ? [single] : [];
+        }
+
+        const summaryBox = document.getElementById('summary-items');
+        let itemsSubtotal = 0;
+        let codCharges = 0;
+        let grandTotal = 0;
+
+        const emptyFullBox = document.getElementById('empty-cart-full-box');
+        const mainGrid = document.getElementById('checkout-main-grid');
+        const deliverySec = document.getElementById('checkout-delivery-section');
+        if (!orderItems.length) {
+            if (emptyFullBox) emptyFullBox.classList.remove('hidden');
+            if (mainGrid) mainGrid.classList.add('hidden');
+            if (deliverySec) deliverySec.classList.add('hidden');
+            summaryBox.innerHTML = `
+                <div class="p-6 text-center bg-slao-cream rounded-2xl border border-gray-200 space-y-2">
+                    <i class="fa-solid fa-bag-shopping text-2xl text-slao-maroon"></i>
+                    <p class="font-bold text-sm text-gray-800">Your cart is empty</p>
+                    <p class="text-xs text-gray-500">No products have been added yet.</p>
+                    <a href="index.html" class="inline-block mt-2 px-4 py-2 bg-slao-maroon text-white text-xs font-bold rounded-xl">Continue Shopping</a>
+                </div>
+            `;
+        }
+
+        orderItems.forEach(item => {
+            const lineTotal = item.price * item.quantity;
+            itemsSubtotal += lineTotal;
+            const row = document.createElement('div');
+            row.className = 'border-b pb-2 flex gap-3 items-center';
+            const thumbSrc = resolveProductImage(item.image || '', '');
+            row.innerHTML = `
+                ${thumbSrc ? `<img src="${thumbSrc}" alt="${item.name}" class="w-12 h-14 object-cover rounded-lg border">` : ''}
+                <div>
+                    <p class="font-bold copyable-text">${item.name}</p>
+                    <p class="text-xs text-gray-500 copyable-text">Color: ${item.color} | Size: ${item.size} | Qty: ${item.quantity}</p>
+                    <p class="text-xs font-bold text-slao-maroon copyable-text">Rs. ${lineTotal.toLocaleString()}</p>
+                </div>
+            `;
+            summaryBox.appendChild(row);
+        });
+
+        function recalculateTotals() {
+            const payType = document.querySelector('input[name="payType"]:checked').value;
+            codCharges = calculateCodCharges(itemsSubtotal, payType);
+            document.getElementById('row-cod-fee').classList.toggle('hidden', codCharges === 0);
+            document.getElementById('summary-cod').innerText = `Rs. ${codCharges.toLocaleString()}`;
+            grandTotal = itemsSubtotal + codCharges;
+            document.getElementById('summary-subtotal').innerText = `Rs. ${itemsSubtotal.toLocaleString()}`;
+            document.getElementById('summary-total').innerText = `Rs. ${grandTotal.toLocaleString()}`;
+        }
+
+        recalculateTotals();
+
+        function switchPayment() {
+            const type = document.querySelector('input[name="payType"]:checked').value;
+            document.getElementById('box-card').classList.toggle('hidden', type !== 'CARD');
+        }
+
+        function normalizeDigits(num) {
+            return String(num || '').replace(/\D/g, '');
+        }
+
+        function showDeliveryErrorModal(errors) {
+            const listEl = document.getElementById('delivery-error-list');
+            if (listEl) {
+                listEl.innerHTML = errors.map(err => `<li>${err}</li>`).join('');
+            }
+            const modal = document.getElementById('delivery-error-modal');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeDeliveryErrorModal() {
+            const modal = document.getElementById('delivery-error-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function openReviewModal() {
+            if (!orderItems || orderItems.length === 0) {
+                alert('Your cart is empty. Please add a product before placing an order.');
+                return;
+            }
+            const firstName = document.getElementById('cust-first-name').value.trim();
+            const lastName = document.getElementById('cust-last-name').value.trim();
+            const fullName = `${firstName} ${lastName}`.trim();
+            const phone = document.getElementById('cust-phone').value.trim();
+            const altPhone = document.getElementById('cust-alt-phone').value.trim();
+            const province = document.getElementById('cust-province').value.trim();
+            const city = document.getElementById('cust-city').value.trim();
+            const postalCode = document.getElementById('cust-postal').value.trim();
+            const address = document.getElementById('cust-address').value.trim();
+            const payType = document.querySelector('input[name="payType"]:checked').value;
+
+            const errors = [];
+            if (!firstName || firstName.length < 2) errors.push('Please enter a valid First Name.');
+            if (!lastName || lastName.length < 2) errors.push('Please enter a valid Last Name.');
+            const pDigits = normalizeDigits(phone);
+            const altDigits = normalizeDigits(altPhone);
+            if (!phone || pDigits.length < 10 || pDigits.length > 13) {
+                errors.push('Primary Contact Number is incomplete or invalid (enter 11 digits e.g. 03001234567).');
+            }
+            if (!altPhone || altDigits.length < 10 || altDigits.length > 13) {
+                errors.push('Alternative Contact Number is incomplete or invalid (enter 11 digits).');
+            }
+            if (pDigits && altDigits && pDigits === altDigits) {
+                errors.push('Primary Contact Number and Alternative Contact Number must be two different numbers.');
+            }
+            if (!province) errors.push('Please select your Province.');
+            if (!city || city.length < 2) errors.push('Please enter a valid City name.');
+            if (!postalCode || normalizeDigits(postalCode).length < 4) {
+                errors.push('Please enter a valid Postal / ZIP Code (at least 4 digits).');
+            }
+            if (!address || address.length < 10) {
+                errors.push('Please enter a complete House / Street Delivery Address (minimum 10 characters).');
+            }
+            if (payType === 'CARD') {
+                const cName = document.getElementById('card-name').value.trim();
+                const cNum = document.getElementById('card-num').value.replace(/\s+/g, '').trim();
+                const cExp = document.getElementById('card-exp').value.trim();
+                const cCvv = document.getElementById('card-cvv').value.trim();
+                const cPostal = document.getElementById('card-postal').value.trim();
+                if (!cName || cNum.length < 12 || !cExp || cCvv.length < 3 || !cPostal) {
+                    errors.push('Please enter complete and valid Debit / Credit Card details.');
+                }
+            }
+            if (errors.length > 0) {
+                showDeliveryErrorModal(errors);
+                return;
+            }
+
+            pendingOrderDraft = {
+                firstName,
+                lastName,
+                name: fullName,
+                phone,
+                altPhone,
+                province,
+                city,
+                postalCode,
+                address,
+                payType
+            };
+
+            document.getElementById('rev-cust-name').innerText = fullName;
+            document.getElementById('rev-cust-phone').innerText = phone;
+            document.getElementById('rev-cust-alt-phone').innerText = altPhone;
+            document.getElementById('rev-cust-province').innerText = province;
+            document.getElementById('rev-cust-city').innerText = city;
+            document.getElementById('rev-cust-postal').innerText = postalCode;
+            document.getElementById('rev-cust-address').innerText = address;
+            document.getElementById('rev-pay-method').innerText = payType === 'COD' ? 'Cash on Delivery (COD)' : 'Debit / Credit Card';
+
+            document.getElementById('rev-products-list').innerHTML = orderItems.map(it => {
+                const pic = resolveProductImage(it.image || '', '');
+                return `
+                    <div class="flex gap-3 items-center bg-white p-2.5 rounded-xl border">
+                        ${pic ? `<img src="${pic}" alt="${it.name}" class="w-16 h-20 object-cover rounded-lg border">` : ''}
+                        <div class="space-y-0.5">
+                            <p class="font-bold text-gray-900">${it.name}</p>
+                            <p class="text-gray-500">Color: <b>${it.color}</b> | Size: <b>${it.size}</b></p>
+                            <p class="text-gray-500">Qty: ${it.quantity}</p>
+                            <p class="font-extrabold text-slao-maroon">Rs. ${(it.price * it.quantity).toLocaleString()}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('rev-subtotal').innerText = `Rs. ${itemsSubtotal.toLocaleString()}`;
+            document.getElementById('rev-cod').innerText = `Rs. ${codCharges.toLocaleString()}`;
+            document.getElementById('rev-grand-total').innerText = `Rs. ${grandTotal.toLocaleString()}`;
+
+            document.getElementById('review-order-modal').classList.remove('hidden');
+        }
+
+        function closeReviewModal() {
+            document.getElementById('review-order-modal').classList.add('hidden');
+        }
+
+        function finalizeConfirmedOrder() {
+            if (!pendingOrderDraft) return;
+            const saveNext = document.getElementById('save-info-next-time').checked;
+            const textOffers = document.getElementById('text-news-offers').checked;
+            pendingOrderDraft.textOffers = textOffers;
+            if (saveNext) {
+                localStorage.setItem('slao_saved_checkout', JSON.stringify(pendingOrderDraft));
+            } else {
+                localStorage.removeItem('slao_saved_checkout');
+            }
+            closeReviewModal();
+
+            const orderId = 'SLAO-' + Math.floor(100000 + Math.random() * 900000);
+            const orderDate = new Date().toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+            const orderRecord = {
+                orderId,
+                voucherId: orderId,
+                date: orderDate,
+                firstName: pendingOrderDraft.firstName,
+                lastName: pendingOrderDraft.lastName,
+                name: pendingOrderDraft.name,
+                phone: pendingOrderDraft.phone,
+                altPhone: pendingOrderDraft.altPhone,
+                province: pendingOrderDraft.province,
+                city: pendingOrderDraft.city,
+                postalCode: pendingOrderDraft.postalCode,
+                address: pendingOrderDraft.address,
+                payType: pendingOrderDraft.payType,
+                status: 'Packing Pending',
+                subtotal: itemsSubtotal,
+                codCharges,
+                totalAmount: grandTotal,
+                items: orderItems
+            };
+
+            const savedOrders = JSON.parse(localStorage.getItem('slao_orders') || '[]');
+            savedOrders.unshift(orderRecord);
+            localStorage.setItem('slao_orders', JSON.stringify(savedOrders));
+            lastConfirmedOrder = orderRecord;
+
+            const custList = JSON.parse(localStorage.getItem('slao_customers') || '[]');
+            const cKeyPhone = (orderRecord.phone || '').replace(/\D/g, '');
+            const cIdx = custList.findIndex(c => (c.phone || '').replace(/\D/g, '') === cKeyPhone && cKeyPhone);
+            const custProfile = {
+                id: cIdx !== -1 ? custList[cIdx].id : ('CUST-' + Date.now()),
+                name: orderRecord.name,
+                email: (cIdx !== -1 ? custList[cIdx].email : '') || '',
+                phone: orderRecord.phone || '',
+                altPhone: orderRecord.altPhone || '',
+                province: orderRecord.province || '',
+                city: orderRecord.city || '',
+                postalCode: orderRecord.postalCode || '',
+                address: orderRecord.address || '',
+                picture: cIdx !== -1 ? (custList[cIdx].picture || '') : '',
+                provider: 'Order Checkout',
+                lastOrderId: orderId,
+                updatedAt: orderDate
+            };
+            if (cIdx !== -1) custList[cIdx] = custProfile;
+            else custList.unshift(custProfile);
+            localStorage.setItem('slao_customers', JSON.stringify(custList));
+            slaoFsUpsert('customers', custProfile.id, custProfile);
+            slaoFsUpsert('orders', orderRecord.orderId, orderRecord);
+
+            fetch(`${SLAO_API_BASE}/customers`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(custProfile)
+            }).catch(() => {});
+
+            fetch(`${SLAO_API_BASE}/orders`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderRecord)
+            }).catch(() => {});
+
+            if (mode === 'CART') {
+                saveCart([]);
+                document.getElementById('cart-count').innerText = '0';
+            }
+
+            document.getElementById('order-toast-msg').innerText = `Your Order ID ${orderId} has been confirmed successfully!`;
+            document.getElementById('order-toast').classList.remove('hidden');
+
+            document.getElementById('slip-order-id').innerText = orderId;
+            document.getElementById('slip-date').innerText = `Date: ${orderDate}`;
+            document.getElementById('slip-cust-name').innerText = orderRecord.name;
+            document.getElementById('slip-cust-phone').innerText = orderRecord.phone;
+            document.getElementById('slip-cust-alt-phone').innerText = orderRecord.altPhone;
+            document.getElementById('slip-cust-location').innerText = `${orderRecord.city}, ${orderRecord.province} (${orderRecord.postalCode})`;
+            document.getElementById('slip-cust-address').innerText = orderRecord.address;
+            document.getElementById('slip-pay-method').innerText = orderRecord.payType;
+            document.getElementById('slip-status-badge').innerText = 'Packing Pending';
+            document.getElementById('slip-grand-total').innerText = `Rs. ${grandTotal.toLocaleString()}`;
+            document.getElementById('slip-items-list').innerHTML = orderItems.map(it => `
+                <div class="py-2 flex justify-between">
+                    <span><b>${it.name}</b> (${it.color}, ${it.size}) &times; ${it.quantity}</span>
+                    <span class="font-bold">Rs. ${(it.price * it.quantity).toLocaleString()}</span>
+                </div>
+            `).join('');
+
+            const baseDir = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+            const trackUrl = `${baseDir}track-order.html?order=${encodeURIComponent(orderId)}`;
+            document.getElementById('slip-track-btn').href = `track-order.html?order=${encodeURIComponent(orderId)}`;
+            document.getElementById('slip-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(trackUrl)}`;
+
+            const slipEl = document.getElementById('order-slip-box');
+            slipEl.classList.remove('hidden');
+            slipEl.scrollIntoView({ behavior: 'smooth' });
+
+            const prodSelect = document.getElementById('review-product-select');
+            prodSelect.innerHTML = orderItems.map(it => `<option value="${it.id}">${it.name} (${it.color}, ${it.size})</option>`).join('');
+            document.getElementById('post-order-review-box').classList.remove('hidden');
+        }
+
+        function openCancelModal() {
+            if (!lastConfirmedOrder) return;
+            document.getElementById('cancel-modal-oid').innerText = lastConfirmedOrder.orderId;
+            document.getElementById('cancel-reason-select').value = '';
+            document.getElementById('cancel-reason-notes').value = '';
+            document.getElementById('cancel-order-modal').classList.remove('hidden');
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancel-order-modal').classList.add('hidden');
+        }
+
+        function submitOrderCancellation() {
+            if (!lastConfirmedOrder) return;
+            const reason = document.getElementById('cancel-reason-select').value;
+            const notes = document.getElementById('cancel-reason-notes').value.trim();
+            if (!reason) {
+                alert('Please select a cancellation reason.');
+                return;
+            }
+            const orders = JSON.parse(localStorage.getItem('slao_orders') || '[]');
+            const idx = orders.findIndex(o => (o.orderId || o.voucherId) === lastConfirmedOrder.orderId);
+            if (idx !== -1) {
+                orders[idx].status = 'Order Cancelled';
+                orders[idx].cancelReason = reason;
+                orders[idx].cancelNotes = notes;
+                orders[idx].cancelDate = new Date().toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                localStorage.setItem('slao_orders', JSON.stringify(orders));
+                slaoFsUpsert('orders', orders[idx].orderId || orders[idx].voucherId, orders[idx]);
+            }
+            document.getElementById('slip-status-badge').innerText = 'Order Cancelled';
+            document.getElementById('slip-status-badge').className = 'font-bold text-rose-700';
+            document.getElementById('slip-cancel-btn').classList.add('hidden');
+            closeCancelModal();
+            alert(`Your cancellation request for Order ${lastConfirmedOrder.orderId} has been recorded.`);
+        }
+
+        function submitOrderReview() {
+            if (!lastConfirmedOrder) return;
+            const productId = Number(document.getElementById('review-product-select').value);
+            const rating = Number(document.getElementById('review-rating').value);
+            const comment = document.getElementById('review-comment').value.trim();
+
+            if (!comment) {
+                alert('Please write a brief review comment before submitting.');
+                return;
+            }
+
+            const prodObj = SLAO_PRODUCTS.find(p => p.id === productId);
+            const newReviewObj = {
+                id: 'REV-' + Date.now(),
+                productId,
+                productName: prodObj ? prodObj.name : ('Product #' + productId),
+                customerName: lastConfirmedOrder.name,
+                voucherId: lastConfirmedOrder.voucherId,
+                rating,
+                comment,
+                date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+            };
+            const existingReviews = JSON.parse(localStorage.getItem('slao_reviews') || '[]');
+            existingReviews.unshift(newReviewObj);
+            localStorage.setItem('slao_reviews', JSON.stringify(existingReviews));
+            slaoFsUpsert('reviews', newReviewObj.id, newReviewObj);
+
+            fetch(`${SLAO_API_BASE}/reviews`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newReviewObj)
+            }).catch(() => {});
+
+            document.getElementById('review-comment').value = '';
+            document.getElementById('review-submitted-msg').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

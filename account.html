@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account, Profile &amp; Support - SLAO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slao: { maroon: '#6b182b', maroonDark: '#4a0f1d', gold: '#d4af37', cream: '#fcf8f3', charcoal: '#1c1c1c' }
+                    },
+                    fontFamily: { serif: ['Cinzel', 'serif'], sans: ['Plus Jakarta Sans', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+<style>
+        img[src*="slao-logo"], .slao-logo-clickable {
+            cursor: pointer !important;
+        }
+</style>
+<style>
+        .copyable-text,
+        .copyable-text *,
+        a, a *,
+        button, button *,
+        [onclick], [onclick] *,
+        .cursor-pointer, .cursor-pointer *,
+        img[src*="slao-logo"], .slao-logo-clickable {
+            cursor: pointer !important;
+        }
+        input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"], input[type="url"], textarea {
+            cursor: text !important;
+        }
+</style>
+</head>
+<body class="bg-slao-cream text-gray-900 min-h-screen flex flex-col">
+    <!-- Top Announcement Bar -->
+    <div class="bg-slao-maroon text-white text-xs md:text-sm tracking-wider py-2 px-6 flex justify-between items-center">
+        <span class="hidden md:inline-block"><i class="fa-solid fa-sparkles mr-2"></i> Nationwide Delivery Across Pakistan</span>
+        <span class="w-full md:w-auto text-center font-semibold">MID-SUMMER SALE IS LIVE! UP TO 40% OFF</span>
+        <span class="hidden md:inline-block"><i class="fa-solid fa-phone mr-1"></i><a href="tel:+923329975035" class="hover:text-slao-gold transition">+92 3329975035</a></span>
+    </div>
+
+    <!-- Header -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-20">
+            <a href="index.html" class="flex-shrink-0 flex items-center gap-3">
+                <img src="images/slao-logo.png" alt="SLAO Collections" style="cursor: pointer;" class="slao-logo-clickable w-11 h-11 rounded-full object-cover border border-slao-gold shadow-sm cursor-pointer">
+                <div>
+                    <span class="font-serif text-2xl sm:text-3xl font-extrabold tracking-widest text-slao-maroon">SLAO</span>
+                    <span class="block text-[10px] tracking-[0.28em] font-semibold text-slao-gold uppercase -mt-1">Collections</span>
+                </div>
+            </a>
+            <nav class="hidden lg:flex space-x-8 font-medium text-sm tracking-wide uppercase">
+                <a href="index.html" class="hover:text-slao-maroon transition">Home</a>
+                <a href="collections/unstitched/index.html" class="hover:text-slao-maroon transition">Unstitched</a>
+                <a href="collections/ready-to-wear/index.html" class="hover:text-slao-maroon transition">Ready to Wear</a>
+                <a href="collections/western/index.html" class="hover:text-slao-maroon transition">Western</a>
+                <a href="collections/sale/index.html" class="text-rose-600 font-semibold hover:text-rose-700 transition">Sale</a>
+            </nav>
+            <div class="flex items-center space-x-1.5 sm:space-x-3">
+                <button type="button" onclick="toggleTopSearch()" class="text-gray-700 hover:text-slao-maroon p-2" title="Search"><i class="fa-solid fa-magnifying-glass text-xl"></i></button>
+                <a href="account.html?tab=liked" class="text-gray-700 hover:text-slao-maroon p-2 relative" title="Liked Products">
+                    <i class="fa-regular fa-heart text-xl"></i>
+                    <span id="liked-count" class="absolute top-0 right-0 bg-slao-maroon text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                </a>
+                <a href="checkout.html" onclick="localStorage.setItem('slao_checkout_mode','CART')" class="text-gray-700 hover:text-slao-maroon p-2 relative" title="Shopping Cart">
+                    <i class="fa-solid fa-bag-shopping text-2xl"></i>
+                    <span id="cart-count" class="absolute top-0 right-0 bg-slao-maroon text-white text-[11px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                </a>
+                <a href="account.html" class="text-slao-maroon p-2" title="Account Profile">
+                    <i id="header-profile-icon" class="fa-solid fa-user text-xl"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+
+
+    <main class="max-w-5xl mx-auto w-full p-4 sm:p-8 flex-grow space-y-6">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+            <a href="index.html" class="text-sm font-bold text-slao-maroon hover:underline">&larr; Back to Store</a>
+            <div class="flex flex-wrap gap-2">
+                <button type="button" id="tab-btn-auth" onclick="switchTab('auth')" class="px-4 py-2 rounded-xl text-xs font-bold bg-slao-maroon text-white">My Account</button>
+                <button type="button" id="tab-btn-liked" onclick="switchTab('liked')" class="px-4 py-2 rounded-xl text-xs font-bold bg-white border border-slao-maroon text-slao-maroon">Liked Products (<span id="liked-tab-count">0</span>)</button>
+                <button type="button" id="tab-btn-complaint" onclick="switchTab('complaint')" class="px-4 py-2 rounded-xl text-xs font-bold bg-white border border-slao-maroon text-slao-maroon">Submit Complaint</button>
+            </div>
+        </div>
+
+        <!-- Account Section: Shows Login/SignUp ONLY when logged out; shows Profile Card with Picture & Pencil Name Edit when logged in -->
+        <section id="section-auth" class="max-w-md mx-auto bg-white p-6 sm:p-8 rounded-3xl shadow-lg space-y-5">
+            <!-- LOGGED IN PROFILE VIEW -->
+            <div id="user-logged-box" class="hidden space-y-5">
+                <div class="text-center border-b pb-4">
+                    <span class="text-[11px] font-bold uppercase tracking-widest text-slao-gold">Verified Profile</span>
+                    <h1 class="font-serif text-2xl font-bold text-slao-maroon mt-1">My SLAO Profile</h1>
+                </div>
+
+                <div class="flex flex-col items-center gap-3">
+                    <div id="profile-avatar-wrapper" class="relative"></div>
+                    <label class="cursor-pointer inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-slao-cream border border-slao-maroon/30 text-xs font-bold text-slao-maroon hover:bg-slao-maroon hover:text-white transition">
+                        <i class="fa-solid fa-camera"></i>
+                        <span id="avatar-btn-label">Add Profile Photo</span>
+                        <input type="file" accept="image/*" class="hidden" onchange="uploadProfilePhoto(event)">
+                    </label>
+                </div>
+
+                <div class="bg-slao-cream/70 p-4 rounded-2xl border space-y-3">
+                    <div>
+                        <span class="text-[11px] uppercase font-bold text-gray-500">Display Name</span>
+                        <div class="flex items-center justify-between gap-2 mt-1">
+                            <p class="font-bold text-base text-gray-900" id="logged-user-name"></p>
+                            <button type="button" onclick="toggleEditName()" class="p-2 rounded-lg bg-white border hover:border-slao-maroon text-slao-maroon" title="Edit Name">
+                                <i class="fa-solid fa-pencil text-xs"></i>
+                            </button>
+                        </div>
+                        <div id="edit-name-box" class="hidden mt-2 flex gap-2">
+                            <input id="edit-name-input" type="text" class="flex-1 p-2 border rounded-xl text-xs bg-white" placeholder="Enter new name">
+                            <button type="button" onclick="saveEditedName()" class="px-3.5 py-2 bg-slao-maroon text-white text-xs font-bold rounded-xl">Save</button>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="text-[11px] uppercase font-bold text-gray-500">Email / Provider</span>
+                        <p class="text-xs font-semibold text-gray-700 mt-0.5" id="logged-user-email"></p>
+                    </div>
+                </div>
+
+                <button type="button" onclick="logoutAccount()" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition">
+                    Sign Out
+                </button>
+            </div>
+
+            <!-- LOGGED OUT LOGIN / SIGN UP VIEW (Hidden automatically once logged in) -->
+            <div id="auth-forms-wrapper" class="space-y-5">
+                <div class="text-center space-y-1">
+                    <h1 class="font-serif text-2xl font-bold text-slao-maroon">SLAO Customer Account</h1>
+                    <p class="text-xs text-gray-500">Sign in or create an account to save your details &amp; liked products</p>
+                </div>
+
+
+
+                <div class="grid grid-cols-2 gap-2 bg-gray-100 p-1 rounded-xl text-xs font-bold">
+                    <button type="button" id="mode-login-btn" onclick="setAuthMode('login')" class="py-2 rounded-lg bg-white text-slao-maroon shadow">Login</button>
+                    <button type="button" id="mode-signup-btn" onclick="setAuthMode('signup')" class="py-2 rounded-lg text-gray-600">Sign Up</button>
+                </div>
+
+                <form onsubmit="submitAuthForm(event)" class="space-y-3 text-sm">
+                    <div id="signup-fields" class="hidden space-y-3">
+                        <input id="acc-name" type="text" placeholder="Full Name *" class="w-full p-3 border rounded-xl text-sm">
+                        <input id="acc-phone" type="tel" placeholder="Mobile Number (03XX-XXXXXXX)" class="w-full p-3 border rounded-xl text-sm">
+                    </div>
+                    <input id="acc-email" type="email" required placeholder="Email Address *" class="w-full p-3 border rounded-xl text-sm">
+                    <input id="acc-pass" type="password" required placeholder="Password *" class="w-full p-3 border rounded-xl text-sm">
+                    <button type="submit" id="auth-submit-label" class="w-full py-3.5 bg-slao-maroon hover:bg-slao-maroonDark text-white font-bold rounded-xl text-xs uppercase tracking-wider transition">Login</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Liked Products Section -->
+        <section id="section-liked" class="hidden bg-white p-6 sm:p-8 rounded-3xl shadow-lg space-y-5">
+            <div class="flex items-center justify-between border-b pb-3">
+                <h2 class="font-serif text-xl font-bold text-slao-maroon">Your Liked Products</h2>
+                <span class="text-xs text-gray-500">Tap any item to view or order</span>
+            </div>
+            <div id="liked-products-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+        </section>
+
+        <!-- Customer Complaint Section (Sent to Admin Portal & Database) -->
+        <section id="section-complaint" class="hidden max-w-lg mx-auto bg-white p-6 sm:p-8 rounded-3xl shadow-lg space-y-4">
+            <div>
+                <h2 class="font-serif text-xl font-bold text-slao-maroon">Submit a Complaint</h2>
+                <p class="text-xs text-gray-500 mt-1">Have an issue with an order, delivery, or product? Let our team know directly.</p>
+            </div>
+            <form onsubmit="submitCustomerComplaint(event)" class="space-y-3 text-sm">
+                <input id="cmp-name" type="text" required placeholder="Your Full Name *" class="w-full p-3 border rounded-xl text-sm">
+                <input id="cmp-contact" type="text" required placeholder="Phone or Email *" class="w-full p-3 border rounded-xl text-sm">
+                <input id="cmp-order" type="text" placeholder="Order ID (Optional, e.g. SLAO-123456)" class="w-full p-3 border rounded-xl text-sm">
+                <textarea id="cmp-message" rows="4" required placeholder="Write your complaint details here... *" class="w-full p-3 border rounded-xl text-sm"></textarea>
+                <button type="submit" class="w-full py-3.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition">Submit Complaint</button>
+            </form>
+        </section>
+    </main>
+
+        <!-- Features / Value Proposition Banner -->
+    <section class="bg-slao-maroon text-white py-12 border-t border-slao-gold/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+                <a href="track-order.html" class="block space-y-2 group rounded-2xl p-2 hover:bg-white/10 transition cursor-pointer" title="Track Your Order">
+                    <i class="fa-solid fa-truck-fast text-3xl text-slao-gold mb-2 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-serif font-bold text-lg group-hover:text-slao-gold transition">Fast Delivery</h4>
+                    <p class="text-xs text-gray-300">Tap to Track Your Parcel &amp; Delivery Status</p>
+                </a>
+                <div onclick="openAuthenticQualityModal()" class="block space-y-2 group rounded-2xl p-2 hover:bg-white/10 transition cursor-pointer" title="Tap for 100% Authentic Quality Details">
+                    <i class="fa-solid fa-shield-halved text-3xl text-slao-gold mb-2 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-serif font-bold text-lg group-hover:text-slao-gold transition copyable-text">100% Authentic Quality</h4>
+                    <p class="text-xs text-gray-200 font-medium copyable-text">Premium fabric &amp; original designer prints</p>
+                    <p class="text-[11px] text-gray-300 leading-relaxed copyable-text">Pure breathable lawn, chiffon &amp; silk weaves with color-fast dyes, fine embroidery &amp; strict quality checks. <span class="underline text-slao-gold font-semibold">Tap for details</span></p>
+                </div>
+                <a href="track-order.html?openReturn=1" class="block space-y-2 group rounded-2xl p-2 hover:bg-white/10 transition cursor-pointer" title="7 Days Easy Return Policy">
+                    <i class="fa-solid fa-arrow-rotate-left text-3xl text-slao-gold mb-2 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-serif font-bold text-lg group-hover:text-slao-gold transition">7 Days Easy Return Policy</h4>
+                    <p class="text-xs text-gray-300">Eligible after order confirmation &amp; delivery</p>
+                </a>
+                <a href="tel:+923329975035" class="block space-y-2 group rounded-2xl p-2 hover:bg-white/10 transition cursor-pointer" title="Call Customer Care: +92 3329975035">
+                    <i class="fa-solid fa-headset text-3xl text-slao-gold mb-2 group-hover:scale-110 transition-transform"></i>
+                    <h4 class="font-serif font-bold text-lg group-hover:text-slao-gold transition">24/7 Customer Care</h4>
+                    <p class="text-xs text-gray-300">Tap to Call: +92 3329975035</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-slao-charcoal text-gray-400 py-6 text-center text-xs mt-auto">
+        &copy; 2026 SLAO (Wear Your Style) &bull;
+        <a href="privacy-policy.html" class="hover:text-slao-gold underline">Privacy Policy</a> &bull;
+        <a href="terms-and-conditions.html" class="hover:text-slao-gold underline">Terms &amp; Conditions</a>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script src="store.js"></script>
+    <script>
+        let currentMode = 'login';
+
+        function setAuthMode(mode) {
+            currentMode = mode;
+            document.getElementById('signup-fields').classList.toggle('hidden', mode !== 'signup');
+            document.getElementById('auth-submit-label').innerText = mode === 'signup' ? 'Create Account' : 'Login';
+            document.getElementById('mode-login-btn').className = mode === 'login' ? 'py-2 rounded-lg bg-white text-slao-maroon shadow' : 'py-2 rounded-lg text-gray-600';
+            document.getElementById('mode-signup-btn').className = mode === 'signup' ? 'py-2 rounded-lg bg-white text-slao-maroon shadow' : 'py-2 rounded-lg text-gray-600';
+        }
+
+        function refreshUserBox() {
+            const user = JSON.parse(localStorage.getItem('slao_current_user') || 'null');
+            const loggedBox = document.getElementById('user-logged-box');
+            const authForms = document.getElementById('auth-forms-wrapper');
+            const tabBtn = document.getElementById('tab-btn-auth');
+
+            if (user) {
+                // Hide Login / Sign Up options once signed in
+                authForms.classList.add('hidden');
+                loggedBox.classList.remove('hidden');
+                tabBtn.innerText = 'My Profile';
+
+                document.getElementById('logged-user-name').innerText = user.name;
+                document.getElementById('logged-user-email').innerText = `${user.email} (${user.provider || 'Account'})`;
+
+                const avatarWrap = document.getElementById('profile-avatar-wrapper');
+                const photoLabel = document.getElementById('avatar-btn-label');
+                if (user.picture) {
+                    avatarWrap.innerHTML = `<img src="${user.picture}" referrerpolicy="no-referrer" alt="${user.name}" class="w-24 h-24 rounded-full object-cover border-4 border-slao-maroon shadow">`;
+                    photoLabel.innerText = 'Change Profile Photo';
+                } else {
+                    const initial = (user.name || 'U').charAt(0).toUpperCase();
+                    avatarWrap.innerHTML = `<div class="w-24 h-24 rounded-full bg-slao-maroon text-white text-3xl font-bold flex items-center justify-center border-4 border-slao-gold shadow">${initial}</div>`;
+                    photoLabel.innerText = 'Add Profile Photo';
+                }
+            } else {
+                authForms.classList.remove('hidden');
+                loggedBox.classList.add('hidden');
+                tabBtn.innerText = 'Login / Sign Up';
+            }
+            updateHeaderCounts();
+        }
+
+        function toggleEditName() {
+            const user = JSON.parse(localStorage.getItem('slao_current_user') || 'null');
+            if (!user) return;
+            const box = document.getElementById('edit-name-box');
+            box.classList.toggle('hidden');
+            if (!box.classList.contains('hidden')) {
+                const inp = document.getElementById('edit-name-input');
+                inp.value = user.name;
+                inp.focus();
+            }
+        }
+
+        function saveEditedName() {
+            const newName = document.getElementById('edit-name-input').value.trim();
+            if (!newName) return;
+            const user = JSON.parse(localStorage.getItem('slao_current_user') || 'null');
+            if (!user) return;
+            user.name = newName;
+            user.customName = true;
+            localStorage.setItem('slao_current_user', JSON.stringify(user));
+            syncCustomerProfileToBackend(user);
+            document.getElementById('edit-name-box').classList.add('hidden');
+            refreshUserBox();
+        }
+
+        function uploadProfilePhoto(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const user = JSON.parse(localStorage.getItem('slao_current_user') || 'null');
+                if (!user) return;
+                user.picture = e.target.result;
+                user.customPicture = true;
+                localStorage.setItem('slao_current_user', JSON.stringify(user));
+                syncCustomerProfileToBackend(user);
+                refreshUserBox();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function submitAuthForm(e) {
+            e.preventDefault();
+            const email = document.getElementById('acc-email').value.trim();
+            const password = document.getElementById('acc-pass').value;
+            const name = document.getElementById('acc-name').value.trim();
+            const phone = document.getElementById('acc-phone').value.trim();
+            const users = JSON.parse(localStorage.getItem('slao_users') || '[]');
+
+            if (currentMode === 'signup') {
+                if (!name) {
+                    alert('Please enter your Full Name.');
+                    return;
+                }
+                const newUser = { name, email, phone, password, picture: '', provider: 'Email Account' };
+                const filtered = users.filter(u => u.email.toLowerCase() !== email.toLowerCase());
+                filtered.push(newUser);
+                localStorage.setItem('slao_users', JSON.stringify(filtered));
+                localStorage.setItem('slao_current_user', JSON.stringify(newUser));
+                syncCustomerProfileToBackend(newUser);
+                alert('Account created & signed in successfully!');
+            } else {
+                const found = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
+                if (!found) {
+                    alert('Account not found or incorrect password. Please click Sign Up to create an account first.');
+                    return;
+                }
+                localStorage.setItem('slao_current_user', JSON.stringify(found));
+                syncCustomerProfileToBackend(found);
+                alert('Logged in successfully!');
+            }
+            refreshUserBox();
+        }
+
+        function openGoogleSignInModal() {
+            document.getElementById('google-modal').classList.remove('hidden');
+        }
+
+        function closeGoogleModal() {
+            document.getElementById('google-modal').classList.add('hidden');
+        }
+
+        function completeGoogleSignIn(e) {
+            e.preventDefault();
+            const name = document.getElementById('google-name-input').value.trim();
+            const email = document.getElementById('google-email-input').value.trim();
+            const customPic = document.getElementById('google-pic-input').value.trim();
+            if (!name || !email) return;
+
+            const gmailAvatar = customPic || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=6b182b&color=fff&size=160`;
+            const user = { name, email, picture: gmailAvatar, provider: 'Google Account' };
+            localStorage.setItem('slao_current_user', JSON.stringify(user));
+            syncCustomerProfileToBackend(user);
+            closeGoogleModal();
+            refreshUserBox();
+            alert('Signed in with Google Account!');
+        }
+
+        function logoutAccount() {
+            localStorage.setItem('slao_manual_logout', '1');
+            localStorage.removeItem('slao_current_user');
+            window.location.reload();
+        }
+
+        function submitCustomerComplaint(e) {
+            e.preventDefault();
+            const complaintObj = {
+                id: 'CMP-' + Date.now(),
+                customerName: document.getElementById('cmp-name').value.trim(),
+                contact: document.getElementById('cmp-contact').value.trim(),
+                orderId: document.getElementById('cmp-order').value.trim() || 'General',
+                message: document.getElementById('cmp-message').value.trim(),
+                status: 'Open',
+                date: new Date().toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+            };
+            const list = JSON.parse(localStorage.getItem('slao_complaints') || '[]');
+            list.unshift(complaintObj);
+            localStorage.setItem('slao_complaints', JSON.stringify(list));
+            slaoFsUpsert('complaints', complaintObj.id, complaintObj);
+
+            fetch(`${SLAO_API_BASE}/complaints`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(complaintObj)
+            }).catch(() => {});
+
+            e.target.reset();
+            alert('Your complaint has been submitted to SLAO Admin Support.');
+        }
+
+        function renderLikedGrid() {
+            updateHeaderCounts();
+            const likedIds = getLikedProducts();
+            document.getElementById('liked-tab-count').innerText = likedIds.length;
+            const grid = document.getElementById('liked-products-grid');
+            const items = SLAO_PRODUCTS.filter(p => likedIds.includes(p.id));
+
+            if (!items.length) {
+                grid.innerHTML = `<p class="text-xs text-gray-500 col-span-full">You haven't liked any products yet. Tap the heart icon on any suit to save it here.</p>`;
+                return;
+            }
+
+            grid.innerHTML = items.map(p => `
+                <div class="border rounded-2xl overflow-hidden bg-white shadow-sm flex flex-col justify-between">
+                    <a href="product.html?id=${p.id}" class="block aspect-[3/4] bg-gray-100 overflow-hidden">
+                        <img src="${resolveProductImage(p.image, '')}" alt="${p.name}" class="w-full h-full object-cover">
+                    </a>
+                    <div class="p-4 space-y-2">
+                        <span class="text-[10px] font-bold uppercase text-slao-gold">${p.category}</span>
+                        <a href="product.html?id=${p.id}" class="font-bold text-sm block line-clamp-1 hover:text-slao-maroon">${p.name}</a>
+                        <div class="flex items-center justify-between pt-2 border-t">
+                            <span class="text-xs font-extrabold text-slao-maroon">Rs. ${p.price.toLocaleString()}</span>
+                            <button type="button" onclick="toggleLikeProduct(${p.id}); renderLikedGrid();" class="text-xs font-bold text-rose-600 hover:underline">Remove</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function switchTab(tab) {
+            document.getElementById('section-auth').classList.toggle('hidden', tab !== 'auth');
+            document.getElementById('section-liked').classList.toggle('hidden', tab !== 'liked');
+            document.getElementById('section-complaint').classList.toggle('hidden', tab !== 'complaint');
+
+            const activeCls = 'px-4 py-2 rounded-xl text-xs font-bold bg-slao-maroon text-white';
+            const inactiveCls = 'px-4 py-2 rounded-xl text-xs font-bold bg-white border border-slao-maroon text-slao-maroon';
+            document.getElementById('tab-btn-auth').className = tab === 'auth' ? activeCls : inactiveCls;
+            document.getElementById('tab-btn-liked').className = tab === 'liked' ? activeCls : inactiveCls;
+            document.getElementById('tab-btn-complaint').className = tab === 'complaint' ? activeCls : inactiveCls;
+            if (tab === 'liked') renderLikedGrid();
+        }
+
+        refreshUserBox();
+        renderLikedGrid();
+        const startTab = new URLSearchParams(window.location.search).get('tab');
+        if (startTab === 'liked' || startTab === 'complaint') switchTab(startTab);
+        else switchTab('auth');
+    </script>
+
+    </body>
+</html>
